@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: PAPILearning
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 1
+    vectorObservationSize: 21
     numStackedVectorObservations: 1
-    vectorActionSize: 05000000
+    vectorActionSize: 0500000009000000
     cameraResolutions: []
     vectorActionDescriptions:
     - Move
+    - "Sk\u0131ll"
     vectorActionSpaceType: 0
   model: {fileID: 0}
   inferenceDevice: 0

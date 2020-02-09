@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PAPIPlayer
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 1
+    vectorObservationSize: 21
     numStackedVectorObservations: 1
     vectorActionSize: 0500000009000000
     cameraResolutions: []
