@@ -1,210 +1,186 @@
-﻿public abstract class AbstractBuffSkill : AbstractSkill, IBuffSkill
+﻿
+namespace PAPIOnline
 {
-	private static int BUFF_APPLY_TIMER = 1;
 
-	// indicates buff skill’s duration
-	protected float duration;
-
-	// indicates buff skill’s amount
-	protected int amount;
-
-	// indicates buff skill’s buff kind
-	protected BuffKind buffKind;
-
-	// indicates debuff skill’s periodic property
-	protected bool periodic;
-
-	protected float buffApplyTimer;
-
-	public AbstractBuffSkill(SkillKind skillKind, string name, int manaConsumption, float timeout, BuffKind buffKind, float duration, int amount, bool periodic)
-		: base(skillKind, name, manaConsumption, timeout)
+	public abstract class AbstractBuffSkill : AbstractSkill, IBuffSkill
 	{
-		this.duration = duration;
-		this.amount = amount;
-		this.buffKind = buffKind;
-		this.periodic = periodic;
-		this.buffApplyTimer = BUFF_APPLY_TIMER;
-	}
+		private static int PERIODIC_APPLY_TIMER = 1;
 
-	protected AbstractBuffSkill()
-	{
-		// Empty constructor is only for cloning purposes
-	}
+		// indicates buff skill’s duration
+		protected float duration;
 
-	public int GetAmount()
-	{
-		return this.amount;
-	}
+		// indicates buff skill’s amount
+		protected float amount;
 
-	public BuffKind GetBuffKind()
-	{
-		return this.buffKind;
-	}
+		// indicates buff skill’s buff kind
+		protected BuffKind buffKind;
 
-	public float GetDuration()
-	{
-		return this.duration;
-	}
+		// indicates debuff skill’s periodic property
+		protected bool periodic;
 
-	public bool IsPeriodic()
-	{
-		return this.periodic;
-	}
+		protected float periodicApplyTimer;
 
-	public override bool UseImpl(IPlayer source, IPlayer target)
-	{
-		if (target == null)
+		public AbstractBuffSkill(SkillKind skillKind, string name, int manaConsumption, float timeout, BuffKind buffKind, float duration, float amount, bool periodic)
+			: base(skillKind, name, manaConsumption, timeout)
 		{
-			UnityEngine.Debug.Log("Skill " + this.name + " no target selected");
-			return false;
+			this.duration = duration;
+			this.amount = amount;
+			this.buffKind = buffKind;
+			this.periodic = periodic;
+			this.periodicApplyTimer = PERIODIC_APPLY_TIMER;
 		}
 
-		if (this.IsBuff())
+		protected AbstractBuffSkill()
 		{
-			target.AddBuff(this.CloneBuffSkill());
+			// Empty constructor is only for cloning purposes
 		}
-		else
+
+		public float GetAmount()
 		{
-			target.AddDebuff(this.CloneBuffSkill());
+			return this.amount;
 		}
-		
-		return true;
-	}
 
-	public void UpdateBuff(IPlayer target, float elapsedTime)
-	{
-		// update timers
-		this.buffApplyTimer -= elapsedTime;
-		this.duration -= elapsedTime;
-
-		if (this.duration > 0)
+		public BuffKind GetBuffKind()
 		{
-			// one second passed 
-			if (this.buffApplyTimer <= 0)
+			return this.buffKind;
+		}
+
+		public float GetDuration()
+		{
+			return this.duration;
+		}
+
+		public bool IsPeriodic()
+		{
+			return this.periodic;
+		}
+
+		public void UpdateBuff(IPlayer target, float elapsedTime)
+		{
+			// update timers
+			this.periodicApplyTimer -= elapsedTime;
+			this.duration -= elapsedTime;
+
+			if (this.duration > 0)
 			{
-				this.ApplyBuff(target);
-				// reset timer
-				this.buffApplyTimer = BUFF_APPLY_TIMER;
+				// one second passed
+				if (IsPeriodic() && this.periodicApplyTimer <= 0)
+				{
+					this.ApplyBuff(target);
+					// reset timer
+					this.periodicApplyTimer = PERIODIC_APPLY_TIMER;
+				}
+			}
+			else
+			{
+				// remove effect of non periodic buffs
+				if (!this.IsPeriodic())
+				{
+					this.ClearBuff(target);
+				}
+				this.RemoveBuff(target);
 			}
 		}
-		else
-		{
-			this.ClearBuff(target);
-			target.RemoveBuff(this);
-		}
-	}
 
-	public void ApplyBuff(IPlayer target)
-	{
-		if (this.IsPeriodic())
+		protected void ApplyBuff(IPlayer target, bool positive)
 		{
-			this.ApplyBuffImpl(target, this.IsBuff());
-		}
-	}
-
-	public void ClearBuff(IPlayer target)
-	{
-		if (!this.IsPeriodic())
-		{
-			// clear affect of debuff
-			this.ApplyBuffImpl(target, !this.IsBuff());
-		}
-	}
-
-	private void ApplyBuffImpl(IPlayer target, bool positive)
-	{
-		switch (this.GetBuffKind())
-		{
-			case BuffKind.HEALTH:
-				{
-					if (positive)
+			switch (this.GetBuffKind())
+			{
+				case BuffKind.HEALTH:
 					{
-						target.IncreaseHealth(this.amount);
-					}
-					else
-					{
-						target.DecreaseHealth(this.amount);
-					}
-					break;
-				}
-			case BuffKind.DAMAGE:
-				{
-					if (positive)
-					{
-						target.IncreaseDamage(this.amount);
-					}
-					else
-					{
-						target.DecreaseDamage(this.amount);
-					}
-					break;
-				}
-			case BuffKind.SPEED:
-				{
-					if (positive)
-					{
-						target.IncreaseSpeed(this.amount);
-					}
-					else
-					{
-						target.DecreaseSpeed(this.amount);
-					}
-					break;
-				}
-			case BuffKind.MANA:
-				{
-					if (target is IPlayer)
-					{
-						IPlayer playerTarget = target as IPlayer;
 						if (positive)
 						{
-							playerTarget.IncreaseMana(this.amount);
+							target.IncreaseHealth((int)this.amount);
 						}
 						else
 						{
-							playerTarget.DecreaseMana(this.amount);
+							target.DecreaseHealth((int)this.amount);
 						}
+						break;
 					}
-					break;
-				}
-			case BuffKind.STUN:
-				{
-					if (positive)
+				case BuffKind.DAMAGE:
 					{
-						target.SetStunned(false);
+						if (positive)
+						{
+							target.IncreaseDamage((int)this.amount);
+						}
+						else
+						{
+							target.DecreaseDamage((int)this.amount);
+						}
+						break;
 					}
-					else
+				case BuffKind.SPEED:
 					{
-						target.SetStunned(true);
+						if (positive)
+						{
+							target.IncreaseSpeed(this.amount);
+						}
+						else
+						{
+							target.DecreaseSpeed(this.amount);
+						}
+						break;
 					}
+				case BuffKind.MANA:
+					{
+						if (target is IPlayer)
+						{
+							IPlayer playerTarget = target as IPlayer;
+							if (positive)
+							{
+								playerTarget.IncreaseMana((int)this.amount);
+							}
+							else
+							{
+								playerTarget.DecreaseMana((int)this.amount);
+							}
+						}
+						break;
+					}
+				case BuffKind.STUN:
+					{
+						if (positive)
+						{
+							target.SetStunned(false);
+						}
+						else
+						{
+							target.SetStunned(true);
+						}
+						break;
+					}
+				default:
 					break;
-				}
-			default:
-				break;
+			}
 		}
+
+		public override ISkill CloneSkill()
+		{
+			return CloneBuffSkill();
+		}
+
+		public void CloneAbstractBuffSkill(AbstractBuffSkill abstractBuffSkill)
+		{
+			// clone base
+			CloneAbstractSkill(abstractBuffSkill);
+			// clone own fields
+			abstractBuffSkill.duration = this.duration;
+			abstractBuffSkill.amount = this.amount;
+			abstractBuffSkill.buffKind = this.buffKind;
+			abstractBuffSkill.periodic = this.periodic;
+			abstractBuffSkill.periodicApplyTimer = this.periodicApplyTimer;
+		}
+
+		public abstract void AddBuff(IPlayer target);
+
+		public abstract void ApplyBuff(IPlayer target);
+
+		public abstract void ClearBuff(IPlayer target);
+
+		public abstract void RemoveBuff(IPlayer target);
+
+		public abstract IBuffSkill CloneBuffSkill();
 	}
 
-	private bool IsBuff()
-	{
-		return this.skillKind == SkillKind.BUFF;
-	}
-
-	public override ISkill CloneSkill()
-	{
-		return CloneBuffSkill();
-	}
-
-	public void CloneAbstractBuffSkill(AbstractBuffSkill abstractBuffSkill)
-	{
-		// clone base
-		CloneAbstractSkill(abstractBuffSkill);
-		// clone own fields
-		abstractBuffSkill.duration = this.duration;
-		abstractBuffSkill.amount = this.amount;
-		abstractBuffSkill.buffKind = this.buffKind;
-		abstractBuffSkill.periodic = this.periodic;
-		abstractBuffSkill.buffApplyTimer = this.buffApplyTimer;
-	}
-
-	public abstract IBuffSkill CloneBuffSkill();
 }

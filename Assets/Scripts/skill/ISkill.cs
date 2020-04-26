@@ -1,30 +1,36 @@
-﻿public interface ISkill
+﻿
+namespace PAPIOnline
 {
-	// getter for skill’s kind
-	SkillKind GetSkillKind();
 
-	// getter for skill’s name
-	string GetName();
+	public interface ISkill
+	{
+		// getter for skill's kind
+		SkillKind GetSkillKind();
 
-	// getter for skill’s mana consumption
-	int GetManaConsumption();
+		// getter for skill's name
+		string GetName();
 
-	// getter for skill’s timeout in seconds
-	float GetTimeout();
+		// getter for skill's mana consumption
+		int GetManaConsumption();
 
-	// getter for skill’s availability
-	bool IsAvailable();
+		// getter for skill's timeout in seconds
+		float GetTimeout();
 
-	// use this skill from source to destination
-	bool Use(IPlayer source, IPlayer target);
+		// getter for skill's availability
+		bool IsAvailable();
 
-	// update buff
-	void Update(float elapsedTime);
+		// use this skill from source to destination
+		bool Use(IPlayer source, IPlayer target);
 
-	// reset skill
-	void ResetSkill();
+		// update buff
+		void Update(float elapsedTime);
 
-	// creates clone of skill
-	ISkill CloneSkill();
+		// reset skill
+		void ResetSkill();
+
+		// creates clone of skill
+		ISkill CloneSkill();
+
+	}
 
 }

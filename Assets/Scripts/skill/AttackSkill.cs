@@ -1,111 +1,110 @@
 ﻿using System;
+using UnityEngine;
 
-public class AttackSkill : AbstractSkill, IAttackSkill
+namespace PAPIOnline
 {
-	// indicates attack skill’s power
-	protected int power;
 
-	// indicates attack skill’s range
-	protected int range;
-
-	// indicates attack skill’s debuff effect
-	private IBuffSkill debuff;
-
-	// indicates attack skill’s debuff effect possibility
-	private int debuffPercentage;
-
-	public AttackSkill(string name, int manaConsumption, float timeout, int power, int range)
-		: this(name, manaConsumption, timeout, power, range, null, 0)
+	public class AttackSkill : AbstractSkill, IAttackSkill
 	{
-	}
+		// indicates attack skill’s power
+		protected int damage;
 
-	public AttackSkill(string name, int manaConsumption, float timeout, int power, int range, IBuffSkill debuff, int debuffPercentage)
-		: base(SkillKind.ATTACK, name, manaConsumption, timeout)
-	{
-		this.power = power;
-		this.range = range;
-		this.debuff = debuff;
-		this.debuffPercentage = debuffPercentage;
-	}
+		// indicates attack skill’s range
+		protected int range;
 
-	private AttackSkill()
-	{
-		// Empty constructor is only for cloning purposes
-	}
+		// indicates attack skill’s debuff effect
+		private DebuffSkill debuff;
 
-	public int GetPower()
-	{
-		return this.power;
-	}
+		// indicates attack skill’s debuff effect possibility
+		private int debuffPercentage;
 
-	public int GetRange()
-	{
-		return this.range;
-	}
-
-	public IBuffSkill GetDebuff()
-	{
-		return this.debuff;
-	}
-
-	public int GetDebuffPercentage()
-	{
-		return this.debuffPercentage;
-	}
-
-	public bool HasDebuff()
-	{
-		return this.debuff != null;
-	}
-
-	public override bool UseImpl(IPlayer source, IPlayer target)
-	{
-		if (target != null)
+		public AttackSkill(string name, int manaConsumption, float timeout, int power, int range)
+			: this(name, manaConsumption, timeout, power, range, null, 0)
 		{
-			float distance = Utils.GetDistance(source.GetPosition(), target.GetPosition());
+		}
+
+		public AttackSkill(string name, int manaConsumption, float timeout, int damage, int range, DebuffSkill debuff, int debuffPercentage)
+			: base(SkillKind.ATTACK, name, manaConsumption, timeout)
+		{
+			this.damage = damage;
+			this.range = range;
+			this.debuff = debuff;
+			this.debuffPercentage = debuffPercentage;
+		}
+
+		private AttackSkill()
+		{
+			// Empty constructor is only for cloning purposes
+		}
+
+		public int GetDamage()
+		{
+			return this.damage;
+		}
+
+		public int GetRange()
+		{
+			return this.range;
+		}
+
+		public IBuffSkill GetDebuff()
+		{
+			return this.debuff;
+		}
+
+		public int GetDebuffPercentage()
+		{
+			return this.debuffPercentage;
+		}
+
+		public bool HasDebuff()
+		{
+			return this.debuff != null;
+		}
+
+		public override bool UseImpl(IPlayer source, IPlayer target)
+		{
+			float distance = Utils.GetDistance(source, target);
 			if (distance < this.range)
 			{
 				// TODO make damage calculation
-				target.DecreaseHealth(this.power);
+				target.DecreaseHealth(this.damage);
 
 				// Use debuff
 				if (this.HasDebuff() && this.UseDebuff())
 				{
-					UnityEngine.Debug.Log("Skill " + this.name + " debuff applied");
-					this.debuff.Use(source, target);
+					// UnityEngine.Debug.Log("Skill " + this.name + " debuff applied");
+					this.debuff.UseImpl(source, target);
 				}
 				return true;
 			}
 			else
 			{
-				UnityEngine.Debug.Log("Skill " + this.name + " is out of range");
+				Debug.LogError("Skill " + this.name + " is out of range");
 			}
+
+			return false;
 		}
-		else
+
+		private bool UseDebuff()
 		{
-			UnityEngine.Debug.Log("Skill " + this.name + " no enemy selected");
+			System.Random random = new System.Random();
+			int value = random.Next(0, 100);
+			return value < this.debuffPercentage;
 		}
 
-		return false;
+		public override ISkill CloneSkill()
+		{
+			AttackSkill clone = new AttackSkill();
+			// clone base fields
+			CloneAbstractSkill(clone);
+			// clone own fields
+			clone.damage = this.damage;
+			clone.range = this.range;
+			clone.debuff = this.debuff;
+			clone.debuffPercentage = this.debuffPercentage;
+			return clone;
+		}
 	}
 
-	private bool UseDebuff()
-	{
-		Random random = new Random();
-		int value = random.Next(0, 100);
-		return value < this.debuffPercentage;
-	}
-
-	public override ISkill CloneSkill()
-	{
-		AttackSkill clone = new AttackSkill();
-		// clone base fields
-		CloneAbstractSkill(clone);
-		// clone own fields
-		clone.power = this.power;
-		clone.range = this.range;
-		clone.debuff = this.debuff;
-		clone.debuffPercentage = this.debuffPercentage;
-		return clone;
-	}
 }

@@ -1,6 +1,12 @@
-public enum PlayerKind
+
+namespace PAPIOnline
 {
-	PLAYER,
-	ENEMY,
-	NONE
+
+	public enum PlayerKind
+	{
+		PLAYER,
+		ENEMY,
+		NONE
+	}
+
 }

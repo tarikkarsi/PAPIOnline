@@ -1,159 +1,176 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public interface IPlayer
+namespace PAPIOnline
 {
-	// getter for player’s name
-	string GetName();
 
-	// getter for player’s health
-	float GetHealth();
+	public interface IPlayer
+	{
+		// getter for player's name
+		string GetName();
 
-	// increase player’s health by the given amount
-	void IncreaseHealth(float amount);
+		// setter for player's name
+		void SetName(string name);
 
-	// decrease player’s health by the given amount
-	void DecreaseHealth(float amount);
+		// getter for player's health capacity
+		int GetHealthCapacity();
 
-	// getter for player’s speed
-	float GetSpeed();
+		// getter for player's health
+		int GetHealth();
 
-	// increase player’s speed by the given amount
-	void IncreaseSpeed(float amount);
+		// getter for player's mana capacity
+		int GetManaCapacity();
 
-	// decrease player’s speed by the given amount
-	void DecreaseSpeed(float amount);
+		// getter for player's mana
+		int GetMana();
 
-	// getter for player’s damage
-	float GetDamage();
+		// increase player's mana by given amount
+		void IncreaseMana(int amount);
 
-	// increase player’s damage by the given amount
-	void IncreaseDamage(float amount);
+		// decrease player's mana by given amount
+		void DecreaseMana(int amount);
 
-	// increase player’s damage by the given amount
-	void DecreaseDamage(float amount);
+		// increase player's health by the given amount
+		void IncreaseHealth(int amount);
 
-	// getter for player’s defense
-	float GetDefense();
+		// decrease player's health by the given amount
+		void DecreaseHealth(int amount);
 
-	// increase player’s defense by the given amount
-	void IncreaseDefense(float amount);
+		// getter for player's speed
+		float GetSpeed();
 
-	// increase player’s defense by the given amount
-	void DecreaseDefense(float amount);
+		// increase player's speed by the given amount
+		void IncreaseSpeed(float amount);
 
-	// getter for player’s level
-	int GetLevel();
+		// decrease player's speed by the given amount
+		void DecreaseSpeed(float amount);
 
-	// increase player’s level
-	void IncreaseLevel();
+		// getter for player's damage
+		int GetDamage();
 
-	// getter for player’s position
-	Vector3 GetPosition();
+		// increase player's damage by the given amount
+		void IncreaseDamage(int amount);
 
-	// setter for player’s position
-	void SetPosition(Vector3 position);
+		// increase player's damage by the given amount
+		void DecreaseDamage(int amount);
 
-	// getter for player’s attack range
-	int GetAttackRange();
+		// getter for player's defense
+		int GetDefense();
 
-	// makes and attack to given target
-	void Attack(IPlayer target);
+		// increase player's defense by the given amount
+		void IncreaseDefense(int amount);
 
-	// getter for player’s attack animation
-	bool IsAttacking();
+		// increase player's defense by the given amount
+		void DecreaseDefense(int amount);
 
-	// moves player to given direction
-	void Move(Vector3 direction);
+		// getter for player's level
+		int GetLevel();
 
-	// getter for applied buffs on the player
-	IList<IBuffSkill> GetBuffs();
+		// increase player's level
+		void IncreaseLevel();
 
-	// add a buff effect to the player
-	void AddBuff(IBuffSkill buff);
+		// getter for player's position
+		Vector3 GetPosition();
 
-	// remove previously added buff effect from the player
-	void RemoveBuff(IBuffSkill buff);
+		// setter for player's position
+		void SetPosition(Vector3 position);
 
-	// getter for applied debuffs on the player
-	IList<IBuffSkill> GetDebuffs();
+		// getter for player's attack range
+		int GetAttackRange();
 
-	// add a debuff effect to the player
-	void AddDebuff(IBuffSkill debuff);
+		// makes and attack to given target
+		void Attack(IPlayer target);
 
-	// remove previously added debuff effect from the player
-	void RemoveDebuff(IBuffSkill debuff);
+		// getter for player's attack animation
+		bool IsAttacking();
 
-	// getter for player’s mana
-	int GetMana();
+		// moves player to given direction
+		void Move(Vector3 direction);
 
-	// increase player’s mana by given amount
-	void IncreaseMana(int amount);
+		// getter for applied buffs on the player
+		IList<IBuffSkill> GetAppliedBuffs();
 
-	// decrease player’s mana by given amount
-	void DecreaseMana(int amount);
+		// add a buff effect to the player
+		void AddAppliedBuff(IBuffSkill buff);
 
-	// getter for player’s experience
-	float GetExperience();
+		// remove previously added buff effect from the player
+		void RemoveAppliedBuff(IBuffSkill buff);
 
-	// increase player’s experience by given amount
-	void IncreaseExperience(float amount);
+		// getter for applied debuffs on the player
+		IList<IBuffSkill> GetAppliedDebuffs();
 
-	// decrease player’s experience by given amount
-	void DecreaseExperience(float amount);
+		// add a debuff effect to the player
+		void AddAppliedDebuff(IBuffSkill debuff);
 
-	// getter for player’s money
-	int GetMoney();
+		// remove previously added debuff effect from the player
+		void RemoveAppliedDebuff(IBuffSkill debuff);
 
-	// increase player’s money by given amount
-	void IncreaseMoney(int amount);
+		// getter for player's experience
+		int GetExperience();
 
-	// getter for player’s health potion count
-	int GetHealthPotionCount();
+		// increase player's experience by given amount
+		void IncreaseExperience(int amount);
 
-	// use health potion
-	void UseHealthPotion();
+		// decrease player's experience by given amount
+		void DecreaseExperience(int amount);
 
-	// getter for player’s mana potion count
-	int GetManaPotionCount();
+		// getter for player's money
+		int GetMoney();
 
-	// use mana potion
-	void UseManaPotion();
+		// increase player's money by given amount
+		void IncreaseMoney(int amount);
 
-	// getter for player’s skills
-	ISkill[] GetSkills();
+		// getter for player's health potion count
+		int GetHealthPotionCount();
 
-	// getter for player’s skill count
-	int GetSkillCount();
+		// use health potion
+		void UseHealthPotion();
 
-	// use the skill with given index
-	void UseSkill(int skillIndex, IPlayer target);
+		// getter for player's mana potion count
+		int GetManaPotionCount();
 
-	// getter for player’s skill animation
-	bool IsUsingSkill();
+		// use mana potion
+		void UseManaPotion();
 
-	// setter for player’s stun information
-	void SetStunned(bool stunned);
+		// getter for player's skills
+		ISkill[] GetSkills();
 
-	// getter for player’s stun information
-	bool IsStunned();
+		// setter for player's skills
+		void SetSkills(ISkill[] skills);
 
-	// setter for player’s dead information
-	void SetDead(bool dead);
+		// getter for player's skill count
+		int GetSkillCount();
 
-	// getter for player’s dead information
-	bool IsDead();
+		// use the skill with given index
+		void UseSkill(int skillIndex, IPlayer target);
 
-	// creates clone of player
-	IPlayer ClonePlayer();
+		// getter for player's skill animation
+		bool IsUsingSkill();
 
-	// resets player properties
-	void ResetPlayer();
+		// setter for player's stun information
+		void SetStunned(bool stunned);
 
-	// getter for player’s available information. IsStunned() || IsDead() || IsUsingSkill() || IsAttacking();
-	bool IsAvailable();
+		// getter for player's stun information
+		bool IsStunned();
 
-	// updates players timers and skills
-	void UpdatePlayer(float elapsedTime);
+		// setter for player's dead information
+		void SetDead(bool dead);
+
+		// getter for player's dead information
+		bool IsDead();
+
+		// creates clone of player
+		IPlayer ClonePlayer();
+
+		// resets player properties
+		void ResetPlayer();
+
+		// getter for player's available information. !this.IsStunned() && !this.IsUsingSkill() && !this.IsAttacking() && !this.IsDead();
+		bool IsAvailable();
+
+		// updates player's timers, skills and position
+		void UpdatePlayer(float elapsedTime);
+
+	}
 
 }

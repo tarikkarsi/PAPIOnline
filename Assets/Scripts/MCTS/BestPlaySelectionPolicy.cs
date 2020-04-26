@@ -1,5 +1,11 @@
-public enum BestPlaySelectionPolicy
+
+namespace PAPIOnline
 {
-	ROBUST,
-	MAX
+
+	public enum BestPlaySelectionPolicy
+	{
+		ROBUST,
+		MAX
+	}
+
 }

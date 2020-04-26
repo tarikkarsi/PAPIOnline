@@ -1,6 +1,12 @@
-public enum SkillKind
+
+namespace PAPIOnline
 {
-	ATTACK,
-	BUFF,
-	DEBUFF
+
+	public enum SkillKind
+	{
+		ATTACK,
+		BUFF,
+		DEBUFF
+	}
+
 }

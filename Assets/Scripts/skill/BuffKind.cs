@@ -1,8 +1,14 @@
-﻿public enum BuffKind
+﻿
+namespace PAPIOnline
 {
-	HEALTH,
-	SPEED,
-	MANA,
-	DAMAGE,
-	STUN
+
+	public enum BuffKind
+	{
+		HEALTH,
+		SPEED,
+		MANA,
+		DAMAGE,
+		STUN
+	}
+
 }
