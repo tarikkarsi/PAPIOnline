@@ -8,7 +8,8 @@ namespace PAPIOnline
 		SPEED,
 		MANA,
 		DAMAGE,
-		STUN
+		STUN,
+		DEFENSE,
 	}
 
 }

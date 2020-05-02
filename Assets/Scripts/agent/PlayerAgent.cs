@@ -9,9 +9,9 @@ namespace PAPIOnline
 
     public class PlayerAgent : Agent
     {
-        private static int MOVE_BRANCH_INDEX = 0;
-        private static int SKILL_BRANCH_INDEX = 1;
-        private static int POTION_BRANCH_INDEX = 2;
+        public readonly static int MOVE_BRANCH_INDEX = 0;
+        public readonly static int SKILL_BRANCH_INDEX = 1;
+        public readonly static int POTION_BRANCH_INDEX = 2;
 
         protected IPlayer player;
         protected IPlayer enemy;
@@ -23,10 +23,13 @@ namespace PAPIOnline
         private PlayerMetrics previousPlayerMetrics = new PlayerMetrics();
         private PlayerMetrics previousEnemyMetrics = new PlayerMetrics();
 
-        public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills)
+        private volatile bool requestDecision = true;
+
+        public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true)
         {
             // initialize player
             this.player = new Player(name, playerProperties, skills);
+            this.requestDecision = requestDecision;
         }
 
         public virtual void Start()
@@ -37,11 +40,13 @@ namespace PAPIOnline
             this.agentRB = GetComponent<Rigidbody>();
             // initialize enemy
             BattleArena battleArena = GetComponentInParent<BattleArena>();
-            this.enemy = battleArena.GetRival(tag).GetPLayer();
+            this.enemy = battleArena.GetRival(tag).GetPlayer();
             this.rewardText = battleArena.GetRewardText(tag);
+            // initialize player rewards
+            this.rewards = new PlayerRewards(this.player, maxStep);
         }
 
-        public IPlayer GetPLayer()
+        public IPlayer GetPlayer()
         {
             return this.player;
         }
@@ -51,7 +56,7 @@ namespace PAPIOnline
             this.transform.position = position;
         }
 
-        public virtual void FixedUpdate()
+        public void FixedUpdate()
         {
             // update position
             player.SetPosition(transform.position);
@@ -64,8 +69,8 @@ namespace PAPIOnline
             player.ResetPlayer();
             // initialize position
             this.player.SetPosition(transform.position);
-            // initialize player rewards
-            this.rewards = new PlayerRewards(this.player, maxStep);
+			// request the first decision at the beggining of the episode
+            RequestDecision();
         }
 
         public override void OnActionReceived(float[] vectorAction)
@@ -88,6 +93,12 @@ namespace PAPIOnline
 
             // Give suitable rewards for this state
             GiveRewards();
+
+            // request decision after each action
+            if (requestDecision)
+            {
+                RequestDecision();
+            }
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -105,8 +116,14 @@ namespace PAPIOnline
             // Attack usage information
             sensor.AddObservation(player.IsAttacking());
 
+            // Health capacity
+            sensor.AddObservation(player.GetHealthCapacity());
+
             // Health information
             sensor.AddObservation(player.GetHealth());
+
+            // Mana capacity
+            sensor.AddObservation(player.GetManaCapacity());
 
             // Mana information
             sensor.AddObservation(player.GetMana());

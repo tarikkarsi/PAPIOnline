@@ -315,15 +315,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3954770627376173360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c2191729ad4241e7b3574c0957277fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b669652ae68c4fc28719f580e73733b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   maxStep: 50000
-  monteCarloManager: {fileID: -8461307377181192279, guid: 07987ec5e23dc4bc08982718311b1b3a,
-    type: 3}
 --- !u!114 &-1015852699979395877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,7 +335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 21
+    vectorObservationSize: 23
     numStackedVectorObservations: 1
     vectorActionSize: 050000000900000003000000
     vectorActionDescriptions: []

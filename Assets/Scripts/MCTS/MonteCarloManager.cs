@@ -1,8 +1,5 @@
 using System;
-using UnityEngine;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace PAPIOnline
 {
@@ -12,43 +9,68 @@ namespace PAPIOnline
 		public float fixedDeltaTime = 0.4f;
 		public float searchTimeout = 0.15f;
 		public int maxDepth = 50;
-		private bool[] playerAllActions;
-		private bool[] enemyAllActions;
+		private Action<float> giveMCTSReward;
+		private Game game;
+		private MonteCarlo mcts;
+		private float[] vectorAction;
 
-		public MonteCarloManager(IPlayer player, IPlayer enemy)
+		public MonteCarloManager(IPlayer player, IPlayer enemy, Action<float> giveMCTSReward)
 		{
-			// all plays are consist of skills, attack, move and use potions
-			this.playerAllActions = new bool[player.GetSkillCount() + 1 + 1 + 2];
-			this.enemyAllActions = new bool[enemy.GetSkillCount() + 1 + 1 + 2];
+			this.game = new Game(player, enemy, fixedDeltaTime);
+			this.giveMCTSReward = giveMCTSReward;
 		}
 
-		public void GetActionReward(IPlayer player, IPlayer enemy, float[] vectorAction, Action mctsFinished)
+		public void GetActionReward(IPlayer player, IPlayer enemy, float[] vectorAction)
 		{
-			Game game = new Game(player, enemy, ref this.playerAllActions, ref this.enemyAllActions, fixedDeltaTime);
-			MonteCarlo mcts = new MonteCarlo(game, maxDepth, mctsFinished);
+			this.game.Reset(player, enemy);
+			this.vectorAction = vectorAction;
+			this.mcts = new MonteCarlo(game, maxDepth, MCTSFinishedForAction);
 
 			Task.Run(() => mcts.RunSearch());
 			Task.Run(() => mcts.EndSearch());
 		}
 
-		public void GetActionReward2(IPlayer player, IPlayer enemy, float[] vectorAction, Action mctsFinished)
+		public void MCTSFinishedForAction()
 		{
-			Game game = new Game(player, enemy, ref this.playerAllActions, ref this.enemyAllActions, fixedDeltaTime);
-			MonteCarlo mcts = new MonteCarlo(game, maxDepth, mctsFinished);
+			float mctsReward = 0;
 
-			Thread t = new Thread(mcts.RunSearch);
-			t.Name = "PAPIOnlineMCTSThread";
-			t.Priority = System.Threading.ThreadPriority.Highest;
-			t.Start();
-			Task.Run(() => mcts.EndSearch());
+			GameState initialState = game.GetInitialState();
+			int bestAction = mcts.BestAction(initialState);
+
+			// calculate reward here
+			if (bestAction != -1)
+			{
+				bool insideSelected = game.ActionInsideSelected(vectorAction, bestAction);
+				// set reward here
+			}
+			
+			UnityEngine.Debug.LogError("Best Action: " + bestAction);
+
+			giveMCTSReward(mctsReward);
 		}
 
 		public void GetWinRateReward(IPlayer player, IPlayer enemy)
 		{
-			
+			this.game.Reset(player, enemy);
+			this.mcts = new MonteCarlo(game, maxDepth, MCTSFinishedForWinRate);
+
+			Task.Run(() => mcts.RunSearch());
+			Task.Run(() => mcts.EndSearch());
 		}
 
-		
+		public void MCTSFinishedForWinRate()
+		{
+			float mctsReward = 0;
+
+			GameState initialState = game.GetInitialState();
+			MonteCarloResult result = mcts.GetResult(initialState);
+
+			UnityEngine.Debug.LogError("plays: " + result.GetPlayCount() + " wins: " + result.GetWinCount());
+
+			// set reward here
+
+			giveMCTSReward(mctsReward);
+		}
 
 	}
 

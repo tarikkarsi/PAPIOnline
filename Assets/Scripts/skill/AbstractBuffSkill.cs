@@ -150,6 +150,18 @@ namespace PAPIOnline
 						}
 						break;
 					}
+				case BuffKind.DEFENSE:
+					{
+						if (positive)
+						{
+							target.IncreaseDefense((int)this.amount);
+						}
+						else
+						{
+							target.DecreaseDefense((int)this.amount);
+						}
+						break;
+					}
 				default:
 					break;
 			}
