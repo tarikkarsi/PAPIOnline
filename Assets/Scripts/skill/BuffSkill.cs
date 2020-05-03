@@ -1,4 +1,16 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          BuffSkill
+ *   
+ *   Description:    Buff skill implementation
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 namespace PAPIOnline
 {
 
@@ -17,7 +29,7 @@ namespace PAPIOnline
 
 		public override bool UseImpl(IPlayer source, IPlayer target)
 		{
-			// add buff skills to the source
+			// Add buff skills to the source
 			this.AddBuff(source);
 			this.ApplyBuff(source);
 			return true;

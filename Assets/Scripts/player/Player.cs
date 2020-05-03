@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          Player
+ *   
+ *   Description:    Player implementation
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,6 +72,11 @@ namespace PAPIOnline
 		public void SetName(string name)
 		{
 			this.name = name;
+		}
+
+		public PlayerProperties GetProperties()
+		{
+			return this.properties;
 		}
 
 		public Vector3 GetPosition()
@@ -225,7 +243,7 @@ namespace PAPIOnline
 			this.properties.experience += amount;
 			if (this.properties.experience >= 100)
 			{
-				// level up
+				// Level-up
 				this.IncreaseLevel();
 				this.properties.experience = 0;
 			}
@@ -257,7 +275,7 @@ namespace PAPIOnline
 
 		public void Attack(IPlayer target)
 		{
-			// check availability and distance
+			// Check availability and distance
 			if (this.IsAvailable() && Utils.CanAttack(this, target))
 			{
 				target.DecreaseHealth(this.GetDamage() - target.GetDefense());
@@ -279,7 +297,7 @@ namespace PAPIOnline
 
 		public void UseHealthPotion()
 		{
-			// check health potion count and health capacity
+			// Check health potion count and health capacity
 			if (this.properties.healthPotionCount > 0 && this.properties.health < this.properties.healthCapacity)
 			{
 				int fillAmount = this.properties.healthCapacity - this.properties.health;
@@ -309,7 +327,7 @@ namespace PAPIOnline
 
 		public void UseManaPotion()
 		{
-			// check mana potion count and mana capacity
+			// Check mana potion count and mana capacity
 			if (this.properties.manaPotionCount > 0 && this.properties.mana < this.properties.manaCapacity)
 			{
 				int fillAmount = this.properties.manaCapacity - this.properties.mana;
@@ -339,9 +357,9 @@ namespace PAPIOnline
 
 		public void UseSkill(int skillIndex, IPlayer target)
 		{
-			// use skill on target enemy
+			// Use skill on target enemy
 			ISkill skill = this.skills[skillIndex];
-			// check for availability and mana
+			// Check for availability and mana
 			if (this.IsAvailable())
 			{
 				bool success = this.skills[skillIndex].Use(this, target);
@@ -381,25 +399,25 @@ namespace PAPIOnline
 
 		public void UpdatePlayer(float elapsedTime)
 		{
-			// update timers
+			// Update timers
 			this.attackAnimationTimer -= elapsedTime;
 			this.skillAnimationTimer -= elapsedTime;
 
-			// update skills
+			// Update skills
 			foreach (ISkill skill in this.skills)
 			{
 				skill.Update(elapsedTime);
 			}
 
-			// update applied buffs
-			// iterate with for and reverse because timeouted buffs will be removed in UpdateBuff
+			// Update applied buffs
+			// Iterate with for and reverse because timeouted buffs will be removed in UpdateBuff
 			for (int i = this.appliedBuffs.Count - 1; i >= 0; i--)
 			{
 				this.appliedBuffs[i].UpdateBuff(this, elapsedTime);
 			}
 
-			// update applied debuffs
-			// iterate with for and reverse because timeouted debuffs will be removed in UpdateBuff
+			// Update applied debuffs
+			// Iterate with for and reverse because timeouted debuffs will be removed in UpdateBuff
 			for (int i = this.appliedDebuffs.Count - 1; i >= 0; i--)
 			{
 				this.appliedDebuffs[i].UpdateBuff(this, elapsedTime);
@@ -445,27 +463,27 @@ namespace PAPIOnline
 		{
 			Player clone = new Player();
 			clone.name = name;
-			// clone properties
+			// Clone properties
 			clone.properties = this.properties.Clone();
-			// clone skills
+			// Clone skills
 			clone.skills = new ISkill[this.skills.Length];
 			for (int i = 0; i < this.skills.Length; i++)
 			{
 				clone.skills[i] = this.skills[i].CloneSkill();
 			}
-			// clone buffs
+			// Clone buffs
 			clone.appliedBuffs = new List<IBuffSkill>();
 			foreach (IBuffSkill buff in this.appliedBuffs)
 			{
 				clone.appliedBuffs.Add(buff.CloneBuffSkill());
 			}
-			// clone debuffs
+			// Clone debuffs
 			clone.appliedDebuffs = new List<IBuffSkill>();
 			foreach (IBuffSkill debuff in this.appliedDebuffs)
 			{
 				clone.appliedDebuffs.Add(debuff.CloneBuffSkill());
 			}
-			// clone other fields
+			// Clone other fields
 			clone.attackAnimationTimer = this.attackAnimationTimer;
 			clone.skillAnimationTimer = this.skillAnimationTimer;
 			return clone;

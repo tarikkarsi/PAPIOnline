@@ -1,4 +1,17 @@
-﻿using UnityEngine;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          BattleArena
+ *   
+ *   Description:    Arena that contains players and reward texts
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+using UnityEngine;
 using MLAgents;
 using TMPro;
 
@@ -7,10 +20,10 @@ namespace PAPIOnline
 
 	public class BattleArena : MonoBehaviour
 	{
-		public string agentBlueTag = "agentBlue";
-		public string agentRedTag = "agentRed";
-		public string rewardBlueTag = "rewardBlue";
-		public string rewardRedTag = "rewardRed";
+		private const string AGENT_BLUE_TAG = "agentBlue";
+		private const string AGENT_RED_TAG = "agentRed";
+		private const string REWARD_BLUE_TAG = "rewardBlue";
+		private const string REWARD_RED_TAG = "rewardRed";
 
 		private PlayerAgent playerAgentBlue;
 		private PlayerAgent playerAgentRed;
@@ -36,33 +49,34 @@ namespace PAPIOnline
 			Transform t = this.transform;
 			foreach (Transform tr in t)
 			{
-				if (tr.tag.Equals(agentBlueTag))
+				switch (tr.tag)
 				{
-					this.playerAgentBlue = tr.GetComponent<PlayerAgent>();
-				}
-				else if (tr.tag.Equals(agentRedTag))
-				{
-					this.playerAgentRed = tr.GetComponent<PlayerAgent>();
-				}
-				else if (tr.tag.Equals(rewardBlueTag))
-				{
-					this.rewardTextBlue = tr.GetComponent<TextMeshPro>();
-				}
-				else if (tr.tag.Equals(rewardRedTag))
-				{
-					this.rewardTextRed = tr.GetComponent<TextMeshPro>();
+					case AGENT_BLUE_TAG:
+						this.playerAgentBlue = tr.GetComponent<PlayerAgent>();
+						break;
+					case AGENT_RED_TAG:
+						this.playerAgentRed = tr.GetComponent<PlayerAgent>();
+						break;
+					case REWARD_BLUE_TAG:
+						this.rewardTextBlue = tr.GetComponent<TextMeshPro>();
+						break;
+					case REWARD_RED_TAG:
+						this.rewardTextRed = tr.GetComponent<TextMeshPro>();
+						break;
+					default:
+						break;
 				}
 			}
 		}
 
 		public PlayerAgent GetRival(string playerTag)
 		{
-			return playerTag.Equals(agentBlueTag) ? playerAgentRed : playerAgentBlue;
+			return playerTag.Equals(AGENT_BLUE_TAG) ? playerAgentRed : playerAgentBlue;
 		}
 
 		public TextMeshPro GetRewardText(string playerTag)
 		{
-			return playerTag.Equals(agentBlueTag) ? rewardTextBlue : rewardTextRed;
+			return playerTag.Equals(AGENT_BLUE_TAG) ? rewardTextBlue : rewardTextRed;
 		}
 
 		public void ResetArea()
@@ -83,7 +97,7 @@ namespace PAPIOnline
 
 		private int ChooseRandomCornerIndex()
 		{
-			return UnityEngine.Random.Range(0, corners.Length);
+			return Random.Range(0, corners.Length);
 		}
 
 	}

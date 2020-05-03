@@ -1,26 +1,39 @@
-﻿using UnityEngine;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          AbstractSkill
+ *   
+ *   Description:    Abstract class for all skill implementations
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+using UnityEngine;
 
 namespace PAPIOnline
 {
 
 	public abstract class AbstractSkill : ISkill
 	{
-		// indicates skill’s kind
+		// Indicates skill’s kind
 		protected SkillKind skillKind;
 
-		// indicates skill’s name
+		// Indicates skill’s name
 		protected string name;
 
-		// indicates skill’s mana consumption
+		// Indicates skill’s mana consumption
 		protected int manaConsumption;
 
-		// indicates skill’s timout in seconds
+		// Indicates skill’s timout in seconds
 		protected float timeout;
 
-		// indicates skill’s availability
+		// Indicates skill’s availability
 		protected bool available;
 
-		// timer that will be updated each update call
+		// Timer that will be updated each update call
 		private float timer;
 
 		public AbstractSkill(SkillKind skillKind, string name, int manaConsumption, float timeout)
@@ -111,7 +124,7 @@ namespace PAPIOnline
 
 		public void CloneAbstractSkill(AbstractSkill abstractSkill)
 		{
-			// clone own fields
+			// Clone own fields
 			abstractSkill.skillKind = this.skillKind;
 			abstractSkill.name = this.name;
 			abstractSkill.manaConsumption = this.manaConsumption;

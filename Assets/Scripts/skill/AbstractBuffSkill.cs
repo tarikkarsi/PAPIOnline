@@ -1,4 +1,17 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          AbstractBuffSkill
+ *   
+ *   Description:    Abstract class for buff and debuff skill implementations
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+
 namespace PAPIOnline
 {
 
@@ -6,16 +19,16 @@ namespace PAPIOnline
 	{
 		private static int PERIODIC_APPLY_TIMER = 1;
 
-		// indicates buff skill’s duration
+		// Indicates buff skill’s duration
 		protected float duration;
 
-		// indicates buff skill’s amount
+		// Indicates buff skill’s amount
 		protected float amount;
 
-		// indicates buff skill’s buff kind
+		// Indicates buff skill’s buff kind
 		protected BuffKind buffKind;
 
-		// indicates debuff skill’s periodic property
+		// Indicates debuff skill’s periodic property
 		protected bool periodic;
 
 		protected float periodicApplyTimer;
@@ -57,23 +70,23 @@ namespace PAPIOnline
 
 		public void UpdateBuff(IPlayer target, float elapsedTime)
 		{
-			// update timers
+			// Update timers
 			this.periodicApplyTimer -= elapsedTime;
 			this.duration -= elapsedTime;
 
 			if (this.duration > 0)
 			{
-				// one second passed
+				// One second passed
 				if (IsPeriodic() && this.periodicApplyTimer <= 0)
 				{
 					this.ApplyBuff(target);
-					// reset timer
+					// Reset timer
 					this.periodicApplyTimer = PERIODIC_APPLY_TIMER;
 				}
 			}
 			else
 			{
-				// remove effect of non periodic buffs
+				// Remove effect of non periodic buffs
 				if (!this.IsPeriodic())
 				{
 					this.ClearBuff(target);
@@ -174,9 +187,9 @@ namespace PAPIOnline
 
 		public void CloneAbstractBuffSkill(AbstractBuffSkill abstractBuffSkill)
 		{
-			// clone base
+			// Clone base
 			CloneAbstractSkill(abstractBuffSkill);
-			// clone own fields
+			// Clone own fields
 			abstractBuffSkill.duration = this.duration;
 			abstractBuffSkill.amount = this.amount;
 			abstractBuffSkill.buffKind = this.buffKind;

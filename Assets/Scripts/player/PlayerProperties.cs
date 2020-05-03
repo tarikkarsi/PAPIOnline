@@ -1,4 +1,25 @@
-﻿using UnityEngine;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          PlayerProperties
+ *   
+ *   Description:    Player property contains common player character features
+ *					 in MMORPGs. It allows creating a character with the desired
+ *					 feature. Every player character created in our game should
+ *					 have these features. Players have physical and situational
+ *					 properties. Physical properties such as health, defense,
+ *					 speed, and damage contribute to the player's battle with
+ *					 other players and monsters. Situational properties such as
+ *					 stun, dead, experience and level determine the situation
+ *					 the player is in during and after these battles.
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+using UnityEngine;
 
 namespace PAPIOnline
 {
@@ -8,52 +29,52 @@ namespace PAPIOnline
 		public static int HEALTH_POTION_FILL = 50;
 		public static int MANA_POTION_FILL = 25;
 
-		// indicates player's capacity
+		// Indicates player's capacity
 		public int healthCapacity;
 
-		// indicates player's health
+		// Indicates player's health
 		public int health;
 
-		// indicates player's mana capacity
+		// Indicates player's mana capacity
 		public int manaCapacity;
 
-		// indicates player's mana
+		// Indicates player's mana
 		public int mana;
 
-		// indicates player's speed
+		// Indicates player's speed
 		public float speed;
 
-		// indicates player's defense
+		// Indicates player's defense
 		public int defense;
 
-		// indicates player's damage
+		// Indicates player's damage
 		public int damage;
 
-		// indicates player's level 
+		// Indicates player's level 
 		public int level;
 
-		// indicates player's attack range 
+		// Indicates player's attack range 
 		public int attackRange;
 
-		// indicates player's money
+		// Indicates player's money
 		public int money;
 
-		// indicates player's experience
+		// Indicates player's experience
 		public int experience;
 
-		// indicates player's health potion count
+		// Indicates player's health potion count
 		public int healthPotionCount;
 
-		// indicates player's mana potion count
+		// Indicates player's mana potion count
 		public int manaPotionCount;
 
-		// indicates player stunned or not
+		// Indicates player stunned or not
 		public bool stunned;
 
-		// indicates player dead or not
+		// Indicates player dead or not
 		public bool dead;
 
-		// indicates player's position
+		// Indicates player's position
 		public Vector3 position;
 
 		public PlayerProperties Clone()

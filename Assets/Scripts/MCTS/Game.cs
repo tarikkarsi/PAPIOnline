@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          Game
+ *   
+ *   Description:    Game class which controls actions and states
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using System.Collections.Generic;
 
 namespace PAPIOnline
@@ -26,7 +39,7 @@ namespace PAPIOnline
 
 		public void Reset(IPlayer player, IPlayer enemy)
 		{
-			// initial state owner is player
+			// Initial state owner is player
 			this.initialState = new GameState(player, enemy, PlayerKind.PLAYER);
 		}
 
@@ -100,23 +113,23 @@ namespace PAPIOnline
 
 		public GameState NextState(GameState state, int play)
 		{
-			// clone player and enemy to new state
+			// Clone player and enemy to new state
 			IPlayer newPlayer = state.GetPlayer().ClonePlayer();
 			IPlayer newEnemy = state.GetEnemy().ClonePlayer();
 
-			// make action
+			// Make action
 			PlayerKind newTurn = MakeAction(newPlayer, newEnemy, play, state.GetTurn());
 			
-			// update players
+			// Update players
 			UpdatePlayers(newPlayer, newEnemy);
 
-			// create new state with new player and enemy
+			// Create new state with new player and enemy
 			return new GameState(newPlayer, newEnemy, newTurn);
 		}
 
 		public PlayerKind MakeAction(IPlayer player, IPlayer enemy, int play, PlayerKind turn)
 		{
-			// make action
+			// Make action
 			if (turn == PlayerKind.PLAYER)
 			{
 				playerHelper.MakeAction(player, enemy, play);
@@ -152,21 +165,23 @@ namespace PAPIOnline
 
 		public bool ActionInsideSelected(float[] vectorAction, int action)
 		{
-			// skill action
+			// Skill action
 			if (action <= playerHelper.ATTACK_INDEX)
 			{
 				float skillAction = vectorAction[PlayerAgent.SKILL_BRANCH_INDEX];
 				return skillAction - 1 == action;
-
 			}
+			// Move action
 			else if (action == playerHelper.MOVE_INDEX)
 			{
 				return vectorAction[PlayerAgent.MOVE_BRANCH_INDEX] != 0;
 			}
+			// Health use action
 			else if (action == playerHelper.HEALTH_POTION_INDEX)
 			{
 				return vectorAction[PlayerAgent.POTION_BRANCH_INDEX] == 1;
 			}
+			// Mana use action
 			else if (action == playerHelper.MANA_POTION_INDEX)
 			{
 				return vectorAction[PlayerAgent.POTION_BRANCH_INDEX] == 2;

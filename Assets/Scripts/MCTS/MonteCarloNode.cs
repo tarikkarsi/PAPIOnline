@@ -1,39 +1,42 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          MonteCarloNode
+ *   
+ *   Description:    Class representing a node in the search tree.
+ *					 Stores tree search stats for UCB1.
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using System;
 using System.Collections.Generic;
 
 namespace PAPIOnline
 {
 
-	/*
-	 * Class representing a node in the search tree.
-	 * Stores tree search stats for UCB1.
-	 */
 	public class MonteCarloNode
 	{
 		public int action;
 		public GameState state;
 		public MonteCarloNode parent;
-		public Dictionary<int, MonteCarloNode> children; // action to node
+		public Dictionary<int, MonteCarloNode> children; // Action to node
 
-		public int n_plays;
-		public int n_wins;
-		public int n_loses;
+		public int numberOfPlays;
+		public int numberOfWins;
+		public int numberOfLoses;
 
-		/*
-		 * Create a new MonteCarloNode in the search tree.
-		 * @param {MonteCarloNode} parent - The parent node.
-		 * @param {Play} play - Last play played to get to this state.
-		 * @param {State} state - The corresponding state.
-		 * @param {Play[]} unexpandedPlays - The node's unexpanded child plays.
-		 */
 		public MonteCarloNode(MonteCarloNode parent, int action, GameState state, bool[] allActions)
 		{
 			this.action = action;
 			this.state = state;
 
 			// Monte Carlo stuff
-			this.n_plays = 0;
-			this.n_wins = 0;
+			this.numberOfPlays = 0;
+			this.numberOfWins = 0;
 
 			// Tree stuff
 			this.parent = parent;
@@ -49,9 +52,7 @@ namespace PAPIOnline
 		}
 
 		/*
-		 * Get the MonteCarloNode corresponding to the given play.
-		 * @param {number} play - The play leading to the child node.
-		 * @return {MonteCarloNode} The child node corresponding to the play given.
+		 * Get the MonteCarloNode corresponding to the given action.
 		 */
 		public MonteCarloNode ChildNode(int action)
 		{
@@ -65,13 +66,9 @@ namespace PAPIOnline
 		}
 
 		/*
-		 * Expand the specified child play and return the new child node.
+		 * Expand the specified child action and return the new child node.
 		 * Add the node to the array of children nodes.
-		 * Remove the play from the array of unexpanded plays.
-		 * @param {Play} play - The play to expand.
-		 * @param {State} childState - The child state corresponding to the given play.
-		 * @param {Play[]} unexpandedPlays - The given child's unexpanded child plays; typically all of them.
-		 * @return {MonteCarloNode} The new child node.
+		 * Remove the play from the array of unexpanded actions.
 		 */
 		public MonteCarloNode Expand(int action, GameState childState, bool[] allActions)
 		{
@@ -86,8 +83,7 @@ namespace PAPIOnline
 		}
 
 		/*
-		 * Get all legal plays from this node.
-		 * @return {Play[]} All plays.
+		 * Get all legal actions from this node.
 		 */
 		public List<int> AllActions()
 		{
@@ -105,8 +101,7 @@ namespace PAPIOnline
 		}
 
 		/*
-		 * Get all unexpanded legal plays from this node.
-		 * @return {Play[]} All unexpanded plays.
+		 * Get all unexpanded legal actions from this node.
 		 */
 		public List<int> UnexpandedActions()
 		{
@@ -125,7 +120,6 @@ namespace PAPIOnline
 
 		/*
 		 * Whether this node is fully expanded.
-		 * @return {boolean} Whether this node is fully expanded.
 		 */
 		public bool IsFullyExpanded()
 		{
@@ -141,7 +135,6 @@ namespace PAPIOnline
 
 		/*
 		 * Whether this node is terminal in the game tree, NOT INCLUSIVE of termination due to winning.
-		 * @return {boolean} Whether this node is a leaf in the tree.
 		 */
 		public bool IsLeaf()
 		{
@@ -150,12 +143,11 @@ namespace PAPIOnline
 
 		/*
 		 * Get the UCB1 value for this node.
-		 * @param {number} biasParam - The square of the bias parameter in the UCB1 algorithm, defaults to 2.
-		 * @return {number} The UCB1 value of this node.
 		 */
 		public double GetUCB1(int biasParam)
 		{
-			return ((double)this.n_wins) / this.n_plays + Math.Sqrt(biasParam * Math.Log(this.parent.n_plays) / this.n_plays);
+			return ((double)this.numberOfWins) / this.numberOfPlays +
+				Math.Sqrt(biasParam * Math.Log(this.parent.numberOfPlays) / this.numberOfPlays);
 		}
 	}
 

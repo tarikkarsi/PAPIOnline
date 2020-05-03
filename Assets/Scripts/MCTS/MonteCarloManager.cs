@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          MonteCarloManager
+ *   
+ *   Description:    Manager that controls MCTS running time and calculates
+ *					 rewards according to the result
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using System;
 using System.Threading.Tasks;
 
@@ -37,11 +51,11 @@ namespace PAPIOnline
 			GameState initialState = game.GetInitialState();
 			int bestAction = mcts.BestAction(initialState);
 
-			// calculate reward here
+			// Calculate reward here
 			if (bestAction != -1)
 			{
 				bool insideSelected = game.ActionInsideSelected(vectorAction, bestAction);
-				// set reward here
+				// Set reward here
 			}
 			
 			UnityEngine.Debug.LogError("Best Action: " + bestAction);
@@ -65,9 +79,9 @@ namespace PAPIOnline
 			GameState initialState = game.GetInitialState();
 			MonteCarloResult result = mcts.GetResult(initialState);
 
-			UnityEngine.Debug.LogError("plays: " + result.GetPlayCount() + " wins: " + result.GetWinCount());
+			UnityEngine.Debug.LogError("plays: " + result.GetNumberOfPlays() + " wins: " + result.GetNumberOfWins());
 
-			// set reward here
+			// Set reward here
 
 			giveMCTSReward(mctsReward);
 		}

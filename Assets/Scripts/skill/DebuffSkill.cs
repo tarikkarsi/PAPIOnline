@@ -1,4 +1,16 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          DebuffSkill
+ *   
+ *   Description:    Debuff skill implementation
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 namespace PAPIOnline
 {
 
@@ -18,7 +30,7 @@ namespace PAPIOnline
 
 		public override bool UseImpl(IPlayer source, IPlayer target)
 		{
-			// add debuff skills to the target
+			// Add debuff skills to the target
 			this.AddBuff(target);
 			this.ApplyBuff(target);
 			return true;

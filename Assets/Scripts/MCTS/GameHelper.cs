@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          GameHelper
+ *   
+ *   Description:    Helper class uses one action list for no memory allocation
+					 and responsible for filling and making this actions
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using UnityEngine;
 
 namespace PAPIOnline
@@ -13,7 +27,7 @@ namespace PAPIOnline
 
 		public GameHelper(IPlayer player)
 		{
-			// all plays are consist of skills, attack, move and use potions
+			// All plays are consist of skills, attack, move and use potions
 			this.allActions = new bool[player.GetSkillCount() + 1 + 1 + 2];
 			this.ATTACK_INDEX = player.GetSkillCount();
 			this.MOVE_INDEX = player.GetSkillCount() + 1;
@@ -23,16 +37,16 @@ namespace PAPIOnline
 
 		public int FillAvailableActions(IPlayer player, IPlayer enemy)
 		{
-			// fill skill masks
+			// Fill skill masks
 			int availableCount = 0;
 			ISkill[] skills = player.GetSkills();
 			float distance = Utils.GetDistance(player, enemy);
 			for (int i = 0; i < skills.Length; i++)
 			{
 				ISkill skill = skills[i];
-				// check skill is available
-				// check player has enough mana to use skill
-				// check player close enough to use attack skill
+				// Check skill is available
+				// Check player has enough mana to use skill
+				// Check player close enough to use attack skill
 				if (!player.IsAvailable() || !skill.IsAvailable() || player.GetMana() < skill.GetManaConsumption()
 					|| (skill.GetSkillKind() == SkillKind.ATTACK && distance > ((IAttackSkill)skill).GetRange()))
 				{
@@ -45,7 +59,7 @@ namespace PAPIOnline
 				}
 			}
 
-			// add attack mask after skill indexes
+			// Add attack mask after skill indexes
 			if (!player.IsAvailable() || distance > player.GetAttackRange())
 			{
 				allActions[ATTACK_INDEX] = false;
@@ -56,7 +70,7 @@ namespace PAPIOnline
 				availableCount++;
 			}
 
-			// eliminate move actions, disable move if close enough to attack
+			// Eliminate move actions, disable move if close enough to attack
 			if (!player.IsAvailable() || availableCount > 0)
 			{
 				allActions[MOVE_INDEX] = false;
@@ -67,9 +81,9 @@ namespace PAPIOnline
 				availableCount++;
 			}
 
-			// eliminate potion actions
-			// check player health is full enough
-			// check player has enough health potion
+			// Eliminate potion actions
+			// Check player health is full enough
+			// Check player has enough health potion
 			if (player.GetHealthCapacity() - player.GetHealth() < PlayerProperties.HEALTH_POTION_FILL
 				|| player.GetHealthPotionCount() == 0)
 			{
@@ -81,8 +95,8 @@ namespace PAPIOnline
 				availableCount++;
 			}
 
-			// check player mana is full
-			// check player has enough mana potion
+			// Check player mana is full
+			// Check player has enough mana potion
 			if (player.GetManaCapacity() - player.GetMana() < PlayerProperties.MANA_POTION_FILL
 				|| player.GetManaPotionCount() == 0)
 			{
@@ -101,33 +115,33 @@ namespace PAPIOnline
 		{
 			if (action == -1)
 			{
-				// if there is not available action to do return
+				// There is not available action to do return
 				return;
 			}
 
-			// use skill
+			// Use skill
 			if (action >= 0 && action < player.GetSkillCount())
 			{
 				player.UseSkill(action, enemy);
 			}
-			// normal attack
+			// Normal attack
 			else if (action == ATTACK_INDEX)
 			{
 				player.Attack(enemy);
 			}
-			// move
+			// Move
 			else if (action == MOVE_INDEX)
 			{
 				Vector3 enemyDirection = Utils.GetDirection(player, enemy);
-				// multiply direction to move immediately
+				// Multiply direction to move immediately
 				player.Move(enemyDirection * 3.5f);
 			}
-			// use health potion
+			// Use health potion
 			else if (action == HEALTH_POTION_INDEX)
 			{
 				player.UseHealthPotion();
 			}
-			// use mana potion
+			// Use mana potion
 			else if (action == MANA_POTION_INDEX)
 			{
 				player.UseManaPotion();

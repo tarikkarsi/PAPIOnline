@@ -1,34 +1,50 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          ISkill
+ *   
+ *   Description:    All the skills in our game must implement the skill
+ *					 interface which includes common features found in all of
+ *					 the skills. Each skill has a timeout value and sets the
+ *					 minimum duration between consecutive uses. Skills need mana
+ *					 to be used. They cannot be used if there is not enough mana.
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 namespace PAPIOnline
 {
 
 	public interface ISkill
 	{
-		// getter for skill's kind
+		// Getter for skill's kind
 		SkillKind GetSkillKind();
 
-		// getter for skill's name
+		// Getter for skill's name
 		string GetName();
 
-		// getter for skill's mana consumption
+		// Getter for skill's mana consumption
 		int GetManaConsumption();
 
-		// getter for skill's timeout in seconds
+		// Getter for skill's timeout in seconds
 		float GetTimeout();
 
-		// getter for skill's availability
+		// Getter for skill's availability
 		bool IsAvailable();
 
-		// use this skill from source to destination
+		// Use this skill from source to destination
 		bool Use(IPlayer source, IPlayer target);
 
-		// update buff
+		// Update buff
 		void Update(float elapsedTime);
 
-		// reset skill
+		// Reset skill
 		void ResetSkill();
 
-		// creates clone of skill
+		// Creates clone of skill
 		ISkill CloneSkill();
 
 	}

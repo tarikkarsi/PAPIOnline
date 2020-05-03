@@ -1,4 +1,17 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          WarriorProperties
+ *   
+ *   Description:    Warrior player properties
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+
 namespace PAPIOnline
 {
 

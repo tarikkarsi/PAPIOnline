@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          GameState
+ *   
+ *   Description:    Container for holding player and enemy state
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 
 namespace PAPIOnline
 {
@@ -16,7 +29,7 @@ namespace PAPIOnline
 			this.player = player;
 			this.enemy = enemy;
 			this.playerKind = playerKind;
-			// increment hash code each state creation
+			// Increment hash code each state creation
 			this.hashCode = HASH_CODE++;
 		}
 

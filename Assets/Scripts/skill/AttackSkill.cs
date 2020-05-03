@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          AttackSkill
+ *   
+ *   Description:    Attack skill implementation
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 using UnityEngine;
 
 namespace PAPIOnline
@@ -6,16 +18,16 @@ namespace PAPIOnline
 
 	public class AttackSkill : AbstractSkill, IAttackSkill
 	{
-		// indicates attack skill’s power
+		// Indicates attack skill’s power
 		protected int damage;
 
-		// indicates attack skill’s range
+		// Indicates attack skill’s range
 		protected int range;
 
-		// indicates attack skill’s debuff effect
+		// Indicates attack skill’s debuff effect
 		private DebuffSkill debuff;
 
-		// indicates attack skill’s debuff effect possibility
+		// Indicates attack skill’s debuff effect possibility
 		private int debuffPercentage;
 
 		public AttackSkill(string name, int manaConsumption, float timeout, int power, int range)
@@ -96,9 +108,9 @@ namespace PAPIOnline
 		public override ISkill CloneSkill()
 		{
 			AttackSkill clone = new AttackSkill();
-			// clone base fields
+			// Clone base fields
 			CloneAbstractSkill(clone);
-			// clone own fields
+			// Clone own fields
 			clone.damage = this.damage;
 			clone.range = this.range;
 			clone.debuff = this.debuff;

@@ -1,4 +1,17 @@
-﻿using System;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          PlayerAgent
+ *   
+ *   Description:    Player agent base class
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+using System;
 using UnityEngine;
 using MLAgents;
 using MLAgents.Sensors;
@@ -27,23 +40,23 @@ namespace PAPIOnline
 
         public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true)
         {
-            // initialize player
+            // Initialize player
             this.player = new Player(name, playerProperties, skills);
             this.requestDecision = requestDecision;
         }
 
         public virtual void Start()
         {
-            // set name
+            // Set name
             this.player.SetName(tag);
-            // get rigit body
+            // Get rigit body
             this.agentRB = GetComponent<Rigidbody>();
-            // initialize enemy
+            // Initialize enemy
             BattleArena battleArena = GetComponentInParent<BattleArena>();
             this.enemy = battleArena.GetRival(tag).GetPlayer();
             this.rewardText = battleArena.GetRewardText(tag);
-            // initialize player rewards
-            this.rewards = new PlayerRewards(this.player, maxStep);
+            // Initialize player rewards
+            this.rewards = new PlayerRewards(this.player.GetName(), maxStep);
         }
 
         public IPlayer GetPlayer()
@@ -58,18 +71,18 @@ namespace PAPIOnline
 
         public void FixedUpdate()
         {
-            // update position
+            // Update position
             player.SetPosition(transform.position);
-            // update timers
+            // Update timers
             player.UpdatePlayer(Time.fixedDeltaTime);
         }
 
         public override void OnEpisodeBegin()
         {
             player.ResetPlayer();
-            // initialize position
+            // Initialize position
             this.player.SetPosition(transform.position);
-			// request the first decision at the beggining of the episode
+			// Request the first decision at the beggining of the episode
             RequestDecision();
         }
 
@@ -79,7 +92,7 @@ namespace PAPIOnline
             // Debug.Log("Agent Skill Action2 " + vectorAction[1]);
             // Debug.Log("Agent Potion Action2 " + vectorAction[2]);
 
-            // Save current metrics before any action
+            // Save current player and enemy metrics before any action
             SaveCurrentMetrics();
 
             // Make move actions
@@ -94,7 +107,7 @@ namespace PAPIOnline
             // Give suitable rewards for this state
             GiveRewards();
 
-            // request decision after each action
+            // Request decision after each action
             if (requestDecision)
             {
                 RequestDecision();
@@ -159,50 +172,28 @@ namespace PAPIOnline
 
         private void GiveRewards()
         {
-            // player win
             if (enemy.IsDead())
             {
+                // Reward for win
                 SetReward(rewards.GetWinReward());
                 EndEpisode();
             }
-            // player loose
             else if (player.IsDead())
             {
-                AddReward(rewards.GetLoseReward());
+                // Reward for loose
+                SetReward(rewards.GetLoseReward());
                 EndEpisode();
             }
             else
             {
-                // Give positive reward for using skills
-                int usedSkillIndex = previousPlayerMetrics.GetUsedSkillIndex(player);
-                if (usedSkillIndex >= 0)
-                {
-                    AddReward(rewards.GetSkillReward(usedSkillIndex));
-                }
+                // Reward for damaging the enemy (covers using skills, attacking and health debuffs)
+                AddReward(rewards.GetDamageReward(previousEnemyMetrics.properties, enemy.GetProperties()));
 
-                // Give positive reward for debuff to enemy
-                if (previousEnemyMetrics.DiffDebuffCount(enemy) != 0)
-                {
-                    AddReward(rewards.GetDebuffReward());
-                }
+                // Reward for increasing player properties (covers using buffs and potions)
+                AddReward(rewards.GetPropertyReward(previousPlayerMetrics.properties, player.GetProperties()));
 
-                // Give positive reward for attacking to enemy
-                if (previousPlayerMetrics.IsAttacked(player))
-                {
-                    AddReward(rewards.GetAttackReward());
-                }
-
-                // Give positive reward for using health pot according to need
-                if (previousPlayerMetrics.DiffHealthPotionCount(player) != 0)
-                {
-                    AddReward(rewards.GetHealthUsageReward(player.GetHealth()));
-                }
-
-                // Give positive reward for using mana pot according to need
-                if (previousPlayerMetrics.DiffManaPotionCount(player) != 0)
-                {
-                    AddReward(rewards.GetManaUsageReward(player.GetMana()));
-                }
+                // Reward for debuffing the enemy (covers using debuffs)
+                AddReward(rewards.GetDebuffReward(previousEnemyMetrics.debuffs, enemy.GetAppliedDebuffs()));
 
                 // Tiny negative reward every step
                 AddReward(rewards.GetStepReward());
@@ -242,7 +233,7 @@ namespace PAPIOnline
 
             }
 
-            // zero means no move
+            // Zero means no move
             if (action != 0)
             {
                 transform.Rotate(rotation, Time.deltaTime * 200f);
@@ -259,7 +250,7 @@ namespace PAPIOnline
             {
                 player.UseSkill(action - 1, enemy);
             }
-            // skill count + 1, means normal attack
+            // Skill count + 1, means normal attack
             else if (action == player.GetSkillCount() + 1)
             {
                 player.Attack(enemy);

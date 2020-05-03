@@ -1,37 +1,60 @@
-﻿
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          IBuffSkill
+ *   
+ *   Description:    Features that distinguish buff/debuff skills from other
+ *					 skills are found in the buff skill interface. All
+ *					 buff/debuff skills in our game must implement this
+ *					 interface. Buff skills and debuff skills work with the same
+ *					 logic, although they have different effects on players.
+ *					 Buff has a positive effect, while debuff has a negative
+ *					 effect. Buff/Debuff skills have a certain amount of impact
+ *					 during duration. This effect can be permanent, temporary or
+ *					 periodic. While the effect of temporary ones comes back
+ *					 when they are deleted, but in permanent ones, this effect
+ *					 does not come back. Finally, periodic ones have more than
+ *					 one effect during duration.
+ *   
+ *   Author:         Tarik Karsi
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
 namespace PAPIOnline
 {
 
 	public interface IBuffSkill : ISkill
 	{
-		// getter for buff skill's duration in seconds
+		// Getter for buff skill's duration in seconds
 		float GetDuration();
 
-		// getter for buff skill's amount
+		// Getter for buff skill's amount
 		float GetAmount();
 
-		// getter for buff skill's buff kind
+		// Getter for buff skill's buff kind
 		BuffKind GetBuffKind();
 
-		// getter for debuff skill's periodic property
+		// Getter for debuff skill's periodic property
 		bool IsPeriodic();
 
-		// adds buff to target
+		// Adds buff to target
 		void AddBuff(IPlayer target);
 
-		// update buff for given target
+		// Update buff for given target
 		void UpdateBuff(IPlayer target, float elapsedTime);
 
-		// applies the efect of the buff
+		// Applies the efect of the buff
 		void ApplyBuff(IPlayer target);
 
-		// clear the effect of the buff
+		// Clear the effect of the buff
 		void ClearBuff(IPlayer target);
 
-		// remove the buff from target
+		// Remove the buff from target
 		void RemoveBuff(IPlayer target);
 
-		// each buff will be added to character as clone
+		// Each buff will be added to character as clone
 		IBuffSkill CloneBuffSkill();
 
 	}
