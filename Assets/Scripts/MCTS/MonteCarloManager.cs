@@ -14,9 +14,16 @@
  *******************************************************************************/
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace PAPIOnline
 {
+
+	public enum MonterCarloRewardType
+	{
+		WIN_RATE,
+		ACTION,
+	};
 
 	public class MonteCarloManager
 	{
@@ -24,67 +31,93 @@ namespace PAPIOnline
 		public float searchTimeout = 0.15f;
 		public int maxDepth = 50;
 		private Action<float> giveMCTSReward;
-		private Game game;
 		private MonteCarlo mcts;
 		private float[] vectorAction;
+		private MonterCarloRewardType rewardType;
 
-		public MonteCarloManager(IPlayer player, IPlayer enemy, Action<float> giveMCTSReward)
+		public MonteCarloManager(IPlayer player, IPlayer enemy, Action<float> giveMCTSReward, MonterCarloRewardType rewardType)
 		{
-			this.game = new Game(player, enemy, fixedDeltaTime);
+			this.mcts = new MonteCarlo(new Game(player, enemy, fixedDeltaTime), maxDepth, MCTSFinished);
 			this.giveMCTSReward = giveMCTSReward;
+			this.rewardType = rewardType;
 		}
 
-		public void GetActionReward(IPlayer player, IPlayer enemy, float[] vectorAction)
+		public void GetReward(IPlayer player, IPlayer enemy, float[] vectorAction)
 		{
-			this.game.Reset(player, enemy);
+			// Reset the MCTS
+			this.mcts.Reset(player, enemy);
 			this.vectorAction = vectorAction;
-			this.mcts = new MonteCarlo(game, maxDepth, MCTSFinishedForAction);
-
 			Task.Run(() => mcts.RunSearch());
 			Task.Run(() => mcts.EndSearch());
 		}
 
-		public void MCTSFinishedForAction()
+		public void MCTSFinished()
 		{
-			float mctsReward = 0;
-
-			GameState initialState = game.GetInitialState();
-			int bestAction = mcts.BestAction(initialState);
-
-			// Calculate reward here
-			if (bestAction != -1)
+			if (rewardType == MonterCarloRewardType.ACTION)
 			{
-				bool insideSelected = game.ActionInsideSelected(vectorAction, bestAction);
-				// Set reward here
+				GiveMCTSActionReward();
 			}
-			
-			UnityEngine.Debug.LogError("Best Action: " + bestAction);
-
-			giveMCTSReward(mctsReward);
+			else
+			{
+				GiveMCTSWinRateReward();
+			}
 		}
 
-		public void GetWinRateReward(IPlayer player, IPlayer enemy)
-		{
-			this.game.Reset(player, enemy);
-			this.mcts = new MonteCarlo(game, maxDepth, MCTSFinishedForWinRate);
-
-			Task.Run(() => mcts.RunSearch());
-			Task.Run(() => mcts.EndSearch());
-		}
-
-		public void MCTSFinishedForWinRate()
+		public void GiveMCTSActionReward()
 		{
 			float mctsReward = 0;
+			MonteCarloNode rootNode = mcts.GetRootNode();
+			List<int> mctsActions = rootNode.AllActions();
+			ISet<int> annActions = mcts.ConvertMCTSActions(this.vectorAction);
 
-			GameState initialState = game.GetInitialState();
-			MonteCarloResult result = mcts.GetResult(initialState);
+			double bestMCTSRate = -1;
+			double bestANNRate = -1;
+			foreach (int action in mctsActions)
+			{
+				MonteCarloNode childNode = rootNode.ChildNode(action);
+				if (childNode != null)
+				{
+					double ratio = ((double)childNode.numberOfWins) / childNode.numberOfPlays;
+					// Set MCTS action max ratio
+					if (ratio > bestMCTSRate)
+					{
+						bestMCTSRate = ratio;
+					}
+					// Set ANN action max ratio
+					if (annActions.Contains(action) && ratio > bestANNRate)
+					{
+						bestANNRate = ratio;
+					}
+				}
+			}
 
-			UnityEngine.Debug.LogError("plays: " + result.GetNumberOfPlays() + " wins: " + result.GetNumberOfWins());
-
-			// Set reward here
+			//move action rewards discarded
+			if (bestANNRate != -1)
+			{
+				double normalizedANNRate = bestANNRate / bestMCTSRate;
+				double differenceFromMax = 1 - normalizedANNRate;
+				double diffSquare = Math.Pow(differenceFromMax, 2);
+				mctsReward = (float)(1.3d * Math.Exp(-5.84d * diffSquare) - 0.3d);
+			}
 
 			giveMCTSReward(mctsReward);
 		}
+
+		public void GiveMCTSWinRateReward()
+		{
+			MonteCarloNode result = mcts.GetRootNode();
+
+			UnityEngine.Debug.LogError("plays: " + result.numberOfWins + " wins: " + result.numberOfPlays);
+
+			// Calculate reward, for %0 = -0.3, %50 = 0, %100 = 1
+
+			float winRate = result.numberOfWins / result.numberOfPlays;
+			float mctsReward = (float)(Math.Exp(2.4d * winRate) - 0.42d);
+
+			giveMCTSReward(mctsReward);
+		}
+
+
 
 	}
 

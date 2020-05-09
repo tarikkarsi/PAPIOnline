@@ -40,6 +40,12 @@ namespace PAPIOnline
             this.nodes = new Dictionary<int, MonteCarloNode>();
         }
 
+		public void Reset(IPlayer player, IPlayer enemy)
+		{
+            this.nodes.Clear();
+            this.game.Reset(player, enemy);
+        }
+
         public void MakeNode(GameState state)
         {
             if (!this.nodes.ContainsKey(state.GetHashCode()))
@@ -92,33 +98,6 @@ namespace PAPIOnline
         }
 
         /*
-		 * From the available statistics, calculate the best move from the given state.
-		 */
-        public int BestAction(GameState state)
-        {
-            MonteCarloNode node = this.nodes[state.GetHashCode()];
-            List<int> allActions = node.AllActions();
-            int bestAction = -1;
-
-            double max = -1;
-            foreach (int action in allActions)
-            {
-                MonteCarloNode childNode = node.ChildNode(action);
-                if (childNode != null)
-                {
-                    double ratio = ((double)childNode.numberOfWins) / childNode.numberOfPlays;
-                    if (ratio > max)
-                    {
-                        bestAction = action;
-                        max = ratio;
-                    }
-                }
-            }
-
-            return bestAction;
-        }
-
-        /*
 		 * Phase 1: Selection
 		 * Select until EITHER not fully expanded OR leaf node
 		 */
@@ -139,7 +118,6 @@ namespace PAPIOnline
                     {
                         bestAction = action;
                         bestUCB1 = childUCB1;
-
                     }
                 }
                 node = node.ChildNode(bestAction);
@@ -216,15 +194,16 @@ namespace PAPIOnline
             }
         }
 
-        // Utility & debugging methods
+        // Utility methods
 
-        /*
-		 * Return MCTS result for given state
-		 */
-        public MonteCarloResult GetResult(GameState state)
+        public MonteCarloNode GetRootNode()
         {
-            MonteCarloNode node = this.nodes[state.GetHashCode()];
-            return new MonteCarloResult(node.action, node.numberOfPlays, node.numberOfWins);
+             return this.nodes[game.GetInitialState().GetHashCode()];
+        }
+
+        public ISet<int> ConvertMCTSActions(float[] vectorAction)
+        {
+            return this.game.ConvertMCTSActions(vectorAction);
         }
 
         private PlayerKind CalculateWinner(IPlayer playerFirstState, IPlayer playerLastState,
@@ -238,6 +217,17 @@ namespace PAPIOnline
             float enemyRemainingTime = enemyLastState.GetHealth() / enemyHealthDiff;
             return playerRemainingTime >= enemyRemainingTime ? PlayerKind.PLAYER : PlayerKind.ENEMY;
         }
+
+        private PlayerKind CalculateWinner2(IPlayer playerFirstState, IPlayer playerLastState,
+            IPlayer enemyFirstState, IPlayer enemyLastState)
+        {
+            float playerTotalHealth = playerLastState.GetHealth() + playerLastState.GetHealthPotionCount() * PlayerProperties.HEALTH_POTION_FILL;
+            float playerTotalMana = playerLastState.GetMana() + playerLastState.GetManaPotionCount() * PlayerProperties.MANA_POTION_FILL;
+            float enemyTotalHealth = enemyLastState.GetHealth() + enemyLastState.GetHealthPotionCount() * PlayerProperties.HEALTH_POTION_FILL;
+            float enemyTotalMana = enemyLastState.GetMana() + enemyLastState.GetManaPotionCount() * PlayerProperties.MANA_POTION_FILL;
+            return playerTotalHealth + playerTotalMana >= enemyTotalHealth + enemyTotalMana ? PlayerKind.PLAYER : PlayerKind.ENEMY;
+        }
+
     }
 
 }

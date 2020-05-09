@@ -87,17 +87,17 @@ namespace PAPIOnline
 		 */
 		public List<int> AllActions()
 		{
-			List<int> ret = new List<int>();
+			List<int> allActions = new List<int>();
 
 			foreach (MonteCarloNode child in this.children.Values)
 			{
 				if (child != null)
 				{
-					ret.Add(child.action);
+					allActions.Add(child.action);
 				}
 			}
 
-			return ret;
+			return allActions;
 		}
 
 		/*
@@ -105,17 +105,17 @@ namespace PAPIOnline
 		 */
 		public List<int> UnexpandedActions()
 		{
-			List<int> ret = new List<int>();
+			List<int> unexpandedActions = new List<int>();
 
 			foreach (KeyValuePair<int, MonteCarloNode> child in this.children)
 			{
 				if (child.Value == null)
 				{
-					ret.Add(child.Key);
+					unexpandedActions.Add(child.Key);
 				}
 			}
 
-			return ret;
+			return unexpandedActions;
 		}
 
 		/*

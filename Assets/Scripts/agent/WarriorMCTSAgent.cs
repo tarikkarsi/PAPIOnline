@@ -18,7 +18,8 @@ namespace PAPIOnline
 	public class WarriorMCTSAgent : WarriorAgent
 	{
 
-		protected MonteCarloManager monteCarloManager;
+		public MonterCarloRewardType rewardType;
+		private MonteCarloManager monteCarloManager;
 
 		public WarriorMCTSAgent() : base("WarriorMCTS", false)
 		{
@@ -28,16 +29,36 @@ namespace PAPIOnline
 		{
 			base.Start();
 			// Initialize monte carlo manager
-			this.monteCarloManager = new MonteCarloManager(player, enemy, GiveMCTSReward);
+			this.monteCarloManager = new MonteCarloManager(player, enemy, GiveMCTSReward, rewardType);
 		}
 
 		public void GiveMCTSReward(float mctsReward)
 		{
 			// Reward for MCTS result
-			AddReward(mctsReward);
+			// add %50 of this value
+			AddReward(mctsReward / 2);
+
+			UnityEngine.Debug.LogError("MCTS Reward = " + (mctsReward / 2));
 
 			// Request new decision
 			RequestDecision();
+		}
+
+		public override void OnActionReceived(float[] vectorAction)
+		{
+			if (rewardType == MonterCarloRewardType.ACTION)
+			{
+				// Get MCTS action reward before action taken
+				monteCarloManager.GetReward(player, enemy, vectorAction);
+				base.OnActionReceived(vectorAction);
+			}
+			else
+			{
+				// Get MCTS win rate reward after action taken
+				base.OnActionReceived(vectorAction);
+				monteCarloManager.GetReward(player, enemy, vectorAction);
+			}
+			
 		}
 
 	}

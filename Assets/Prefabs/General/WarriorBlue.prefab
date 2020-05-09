@@ -329,13 +329,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5932239978101890176}
-  - component: {fileID: 5952663431396639012}
-  - component: {fileID: 5960022519538812710}
-  - component: {fileID: 2017230870576216605}
+  - component: {fileID: -2549106941208839872}
   - component: {fileID: 1118862419464201063}
   - component: {fileID: -4328162991864299810}
+  - component: {fileID: 5952663431396639012}
+  - component: {fileID: 5960022519538812710}
   m_Layer: 0
-  m_Name: WarriorBlueMCTSAction
+  m_Name: WarriorBlue
   m_TagString: agentBlue
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,36 +356,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 225, z: 0}
---- !u!54 &5952663431396639012
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5934191127971568270}
-  serializedVersion: 2
-  m_Mass: 25
-  m_Drag: 2
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
---- !u!65 &5960022519538812710
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5934191127971568270}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2017230870576216605
+--- !u!114 &-2549106941208839872
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -394,11 +365,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5934191127971568270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b669652ae68c4fc28719f580e73733b, type: 3}
+  m_Script: {fileID: 11500000, guid: 34da9fdf8069c4e05ba217aa8f1616d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
-    maxStep: 0
+    maxStep: 5000
   hasUpgradedFromAgentParameters: 1
   maxStep: 50000
 --- !u!114 &1118862419464201063
@@ -414,7 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 23
+    vectorObservationSize: 78
     numStackedVectorObservations: 1
     vectorActionSize: 050000000900000003000000
     vectorActionDescriptions: []
@@ -454,6 +425,35 @@ MonoBehaviour:
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
   m_StartVerticalOffset: 0.5
   m_EndVerticalOffset: 0.5
+--- !u!54 &5952663431396639012
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5934191127971568270}
+  serializedVersion: 2
+  m_Mass: 25
+  m_Drag: 2
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!65 &5960022519538812710
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5934191127971568270}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5934328355872962336
 GameObject:
   m_ObjectHideFlags: 0

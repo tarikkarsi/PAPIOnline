@@ -18,10 +18,10 @@ namespace PAPIOnline
 	public class MonteCarloResult
 	{
 		private int action;
-		private int numberOfPlays;
-		private int numberOfWins;
+		private float numberOfPlays;
+		private float numberOfWins;
 
-		public MonteCarloResult(int action, int numberOfPlays, int numberOfWins)
+		public MonteCarloResult(int action, float numberOfPlays, float numberOfWins)
 		{
 			this.action = action;
 			this.numberOfPlays = numberOfPlays;
@@ -33,12 +33,12 @@ namespace PAPIOnline
 			return this.action;
 		}
 
-		public int GetNumberOfPlays()
+		public float GetNumberOfPlays()
 		{
 			return this.numberOfPlays;
 		}
 
-		public int GetNumberOfWins()
+		public float GetNumberOfWins()
 		{
 			return this.numberOfWins;
 		}

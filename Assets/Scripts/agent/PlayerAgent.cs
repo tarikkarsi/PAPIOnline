@@ -116,18 +116,9 @@ namespace PAPIOnline
 
         public override void CollectObservations(VectorSensor sensor)
         {
-            // Distance between enemy
-            sensor.AddObservation(Utils.GetDistance(player, enemy));
-
-            // Position of player and enemy
+            // Player Properties
+            // Position information
             sensor.AddObservation(player.GetPosition());
-            sensor.AddObservation(enemy.GetPosition());
-
-            // Skill and attack usage information
-            sensor.AddObservation(GetSkillObservations());
-
-            // Attack usage information
-            sensor.AddObservation(player.IsAttacking());
 
             // Health capacity
             sensor.AddObservation(player.GetHealthCapacity());
@@ -135,24 +126,81 @@ namespace PAPIOnline
             // Health information
             sensor.AddObservation(player.GetHealth());
 
+            // Health potion count
+            sensor.AddObservation(player.GetHealthPotionCount());
+
             // Mana capacity
             sensor.AddObservation(player.GetManaCapacity());
 
             // Mana information
             sensor.AddObservation(player.GetMana());
 
-            // Buff count
-            sensor.AddObservation(player.GetAppliedBuffs().Count);
-
-            // Enemy debuff count
-            sensor.AddObservation(enemy.GetAppliedDebuffs().Count);
-
-            // Health potion count
-            sensor.AddObservation(player.GetHealthPotionCount());
-
             // Mana potion count
             sensor.AddObservation(player.GetManaPotionCount());
 
+            // Speed information
+            sensor.AddObservation(player.GetSpeed());
+
+            // Defense information
+            sensor.AddObservation(player.GetDefense());
+
+            // Damage information
+            sensor.AddObservation(player.GetDamage());
+
+			// Attack range information
+            sensor.AddObservation(player.GetAttackRange());
+
+            // Stun information
+            sensor.AddObservation(player.IsStunned());
+
+            // Attack usage information
+            sensor.AddObservation(player.IsAttacking());
+
+            // Skill information
+            IAttackSkill attackSkill;
+			IBuffSkill buffSkill;
+            foreach (ISkill skill in player.GetSkills())
+            {
+                sensor.AddObservation(skill.IsAvailable());
+                sensor.AddObservation((int)skill.GetSkillKind());
+                sensor.AddObservation(skill.GetManaConsumption());
+                sensor.AddObservation(skill.GetTimeout());
+
+				// attack and buff skill observations should be equal to preserve total observation count
+				// observation for attack skill
+				if (skill.GetSkillKind() == SkillKind.ATTACK)
+				{
+                    attackSkill = (IAttackSkill)skill;
+                    sensor.AddObservation(attackSkill.GetDamage());
+                    sensor.AddObservation(attackSkill.GetRange());
+                    sensor.AddObservation(attackSkill.HasDebuff());
+                    sensor.AddObservation(attackSkill.GetDebuffPercentage());
+                }
+				// observation for buff skill
+				else
+				{
+                    buffSkill = (IBuffSkill)skill;
+                    sensor.AddObservation(buffSkill.GetDuration());
+                    sensor.AddObservation(buffSkill.GetAmount());
+                    sensor.AddObservation((int)buffSkill.GetBuffKind());
+                    sensor.AddObservation(buffSkill.IsPeriodic());
+                }
+            }
+
+            // Distance between enemy
+            sensor.AddObservation(Utils.GetDistance(player, enemy));          
+         
+            // Enemy properties
+            // Position information
+            sensor.AddObservation(enemy.GetPosition());
+
+            // debuff information
+			// maximum three debuff information
+            int debuffCount = enemy.GetAppliedDebuffs().Count;
+            for (int i = 0; i < 3; i++)
+			{
+                sensor.AddObservation(i < debuffCount ? (int)enemy.GetAppliedDebuffs()[i].GetBuffKind() : -1);
+			}
         }
 
         public override void CollectDiscreteActionMasks(DiscreteActionMasker actionMasker)
@@ -198,17 +246,6 @@ namespace PAPIOnline
                 // Tiny negative reward every step
                 AddReward(rewards.GetStepReward());
             }
-        }
-
-        private float[] GetSkillObservations()
-        {
-            ISkill[] skills = player.GetSkills();
-            float[] skillObservations = new float[skills.Length];
-            for (int i = 0; i < skills.Length; i++)
-            {
-                skillObservations[i] = skills[i].IsAvailable() ? 0f : 1f;
-            }
-            return skillObservations;
         }
 
         protected void MoveAction(int action)

@@ -163,34 +163,20 @@ namespace PAPIOnline
 			return currentTurn == PlayerKind.PLAYER ? PlayerKind.ENEMY : PlayerKind.PLAYER;
 		}
 
-		public bool ActionInsideSelected(float[] vectorAction, int action)
+		public ISet<int> ConvertMCTSActions(float[] vectorAction)
 		{
-			// Skill action
-			if (action <= playerHelper.ATTACK_INDEX)
+			ISet<int> correspondingActions = new HashSet<int>();
+			// Convert skill actions
+			if (vectorAction[PlayerAgent.SKILL_BRANCH_INDEX] != 0)
 			{
-				float skillAction = vectorAction[PlayerAgent.SKILL_BRANCH_INDEX];
-				return skillAction - 1 == action;
+				correspondingActions.Add((int)vectorAction[PlayerAgent.SKILL_BRANCH_INDEX] - 1);
 			}
-			// Move action
-			else if (action == playerHelper.MOVE_INDEX)
+			// Convert potion actions
+			if (vectorAction[PlayerAgent.POTION_BRANCH_INDEX] != 0)
 			{
-				return vectorAction[PlayerAgent.MOVE_BRANCH_INDEX] != 0;
+				correspondingActions.Add(playerHelper.HEALTH_POTION_INDEX + (int)vectorAction[PlayerAgent.POTION_BRANCH_INDEX] - 1);
 			}
-			// Health use action
-			else if (action == playerHelper.HEALTH_POTION_INDEX)
-			{
-				return vectorAction[PlayerAgent.POTION_BRANCH_INDEX] == 1;
-			}
-			// Mana use action
-			else if (action == playerHelper.MANA_POTION_INDEX)
-			{
-				return vectorAction[PlayerAgent.POTION_BRANCH_INDEX] == 2;
-			}
-			else
-			{
-				UnityEngine.Debug.LogError("Game::ActionInsideSelected unrecognised action came " + action);
-			}
-			return false;
+			return correspondingActions;
 		}
 	}
 
