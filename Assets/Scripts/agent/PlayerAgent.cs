@@ -26,6 +26,7 @@ namespace PAPIOnline
         public readonly static int SKILL_BRANCH_INDEX = 1;
         public readonly static int POTION_BRANCH_INDEX = 2;
 
+        protected BattleArena battleArena;
         protected IPlayer player;
         protected IPlayer enemy;
         private PlayerRewards rewards;
@@ -52,7 +53,7 @@ namespace PAPIOnline
             // Get rigit body
             this.agentRB = GetComponent<Rigidbody>();
             // Initialize enemy
-            BattleArena battleArena = GetComponentInParent<BattleArena>();
+            this.battleArena = GetComponentInParent<BattleArena>();
             this.enemy = battleArena.GetRival(tag).GetPlayer();
             this.rewardText = battleArena.GetRewardText(tag);
             // Initialize player rewards
@@ -62,11 +63,6 @@ namespace PAPIOnline
         public IPlayer GetPlayer()
         {
             return this.player;
-        }
-
-        public void SetPosition(Vector3 position)
-        {
-            this.transform.position = position;
         }
 
         public void FixedUpdate()
@@ -79,8 +75,13 @@ namespace PAPIOnline
 
         public override void OnEpisodeBegin()
         {
-            player.ResetPlayer();
-            // Initialize position
+			// Set position relative to battle arena
+            Vector3 position = CompareTag(BattleArena.AGENT_BLUE_TAG) ? new Vector3(30f, 0f, 30f) : new Vector3(-30f, 0f, -30f);
+            position += battleArena.GetPosition();
+            this.transform.position = position;
+
+            // Reset wrapped player
+            this.player.ResetPlayer();
             this.player.SetPosition(transform.position);
 			// Request the first decision at the beggining of the episode
             RequestDecision();

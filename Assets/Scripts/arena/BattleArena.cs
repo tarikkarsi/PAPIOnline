@@ -12,7 +12,6 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using UnityEngine;
-using Unity.MLAgents;
 using TMPro;
 
 namespace PAPIOnline
@@ -20,8 +19,9 @@ namespace PAPIOnline
 
 	public class BattleArena : MonoBehaviour
 	{
-		private const string AGENT_BLUE_TAG = "agentBlue";
-		private const string AGENT_RED_TAG = "agentRed";
+		[HideInInspector]
+		public const string AGENT_BLUE_TAG = "agentBlue";
+		public const string AGENT_RED_TAG = "agentRed";
 		private const string REWARD_BLUE_TAG = "rewardBlue";
 		private const string REWARD_RED_TAG = "rewardRed";
 
@@ -31,17 +31,9 @@ namespace PAPIOnline
 		private TextMeshPro rewardTextBlue;
 		private TextMeshPro rewardTextRed;
 
-		private readonly Vector3[] corners = {
-		new Vector3(30f, 0f, 30f),
-		new Vector3(30f, 0f, -30f),
-		new Vector3(-30f, 0f, 30f),
-		new Vector3(-30f, 0f, -30f)
-	};
-
 		public void Awake()
 		{
 			SetComponents();
-			Academy.Instance.OnEnvironmentReset += ResetArea;
 		}
 
 		private void SetComponents()
@@ -79,26 +71,9 @@ namespace PAPIOnline
 			return playerTag.Equals(AGENT_BLUE_TAG) ? rewardTextBlue : rewardTextRed;
 		}
 
-		public void ResetArea()
+		public Vector3 GetPosition()
 		{
-			ResetPlayers();
-		}
-
-		private void ResetPlayers()
-		{
-			int corner1Index = ChooseRandomCornerIndex();
-			// place relative to area
-			Vector3 player1Pos = corners[corner1Index] + this.transform.position;
-			playerAgentBlue.SetPosition(player1Pos);
-
-			int corner2Index = corners.Length - corner1Index - 1;
-			Vector3 player2Pos = corners[corner2Index] + this.transform.position;
-			playerAgentRed.SetPosition(player2Pos);
-		}
-
-		private int ChooseRandomCornerIndex()
-		{
-			return Random.Range(0, corners.Length);
+			return this.transform.position;
 		}
 
 	}
