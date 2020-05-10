@@ -35,10 +35,10 @@ namespace PAPIOnline
 		public void GiveMCTSReward(float mctsReward)
 		{
 			// Reward for MCTS result
-			// add %50 of this value
-			AddReward(mctsReward / 2);
+			// add %10 of this value
+			AddReward(mctsReward / 10);
 
-			UnityEngine.Debug.LogError("MCTS Reward = " + (mctsReward / 2));
+			//UnityEngine.Debug.LogError("MCTS Reward = " + (mctsReward / 10));
 
 			// Request new decision
 			RequestDecision();

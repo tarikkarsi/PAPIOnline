@@ -12,7 +12,7 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
 using TMPro;
 
 namespace PAPIOnline
@@ -87,11 +87,12 @@ namespace PAPIOnline
 		private void ResetPlayers()
 		{
 			int corner1Index = ChooseRandomCornerIndex();
-			Vector3 player1Pos = corners[corner1Index];
+			// place relative to area
+			Vector3 player1Pos = corners[corner1Index] + this.transform.position;
 			playerAgentBlue.SetPosition(player1Pos);
 
 			int corner2Index = corners.Length - corner1Index - 1;
-			Vector3 player2Pos = corners[corner2Index];
+			Vector3 player2Pos = corners[corner2Index] + this.transform.position;
 			playerAgentRed.SetPosition(player2Pos);
 		}
 

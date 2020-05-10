@@ -13,8 +13,8 @@
  *******************************************************************************/
 using System;
 using UnityEngine;
-using MLAgents;
-using MLAgents.Sensors;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
 using TMPro;
 
 namespace PAPIOnline
@@ -56,7 +56,7 @@ namespace PAPIOnline
             this.enemy = battleArena.GetRival(tag).GetPlayer();
             this.rewardText = battleArena.GetRewardText(tag);
             // Initialize player rewards
-            this.rewards = new PlayerRewards(this.player.GetName(), maxStep);
+            this.rewards = new PlayerRewards(this.player.GetName(), MaxStep);
         }
 
         public IPlayer GetPlayer()
