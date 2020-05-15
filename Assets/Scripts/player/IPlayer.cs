@@ -102,7 +102,7 @@ namespace PAPIOnline
 		int GetAttackRange();
 
 		// Makes and attack to given target
-		void Attack(IPlayer target);
+		bool Attack(IPlayer target);
 
 		// Getter for player's attack animation
 		bool IsAttacking();
@@ -147,13 +147,13 @@ namespace PAPIOnline
 		int GetHealthPotionCount();
 
 		// Use health potion
-		void UseHealthPotion();
+		bool UseHealthPotion();
 
 		// Getter for player's mana potion count
 		int GetManaPotionCount();
 
 		// Use mana potion
-		void UseManaPotion();
+		bool UseManaPotion();
 
 		// Getter for player's skills
 		ISkill[] GetSkills();
@@ -165,7 +165,7 @@ namespace PAPIOnline
 		int GetSkillCount();
 
 		// Use the skill with given index
-		void UseSkill(int skillIndex, IPlayer target);
+		bool UseSkill(int skillIndex, IPlayer target);
 
 		// Getter for player's skill animation
 		bool IsUsingSkill();

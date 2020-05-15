@@ -12,7 +12,6 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using UnityEngine;
-using TMPro;
 
 namespace PAPIOnline
 {
@@ -20,16 +19,18 @@ namespace PAPIOnline
 	public class BattleArena : MonoBehaviour
 	{
 		[HideInInspector]
-		public const string AGENT_BLUE_TAG = "agentBlue";
-		public const string AGENT_RED_TAG = "agentRed";
-		private const string REWARD_BLUE_TAG = "rewardBlue";
-		private const string REWARD_RED_TAG = "rewardRed";
+		public static int WIDTH = 50;
+		public static int HEIGHT = 50;
+		public static int MAX_DISTANCE = 70; // near hypotenus
+		public const string BLUE_AGENT_TAG = "blueAgent";
+		public const string BLUE_INFO_TAG = "blueInfo";
+		public const string RED_AGENT_TAG = "redAgent";
+		public const string RED_INFO_TAG = "redInfo";
 
-		private PlayerAgent playerAgentBlue;
-		private PlayerAgent playerAgentRed;
-
-		private TextMeshPro rewardTextBlue;
-		private TextMeshPro rewardTextRed;
+		private PlayerAgent blueAgent;
+		private PlayerAgent redAgent;
+		private BattleInfo blueBattleInfo;
+		private BattleInfo redBattleInfo;
 
 		public void Awake()
 		{
@@ -43,19 +44,17 @@ namespace PAPIOnline
 			{
 				switch (tr.tag)
 				{
-					case AGENT_BLUE_TAG:
-						this.playerAgentBlue = tr.GetComponent<PlayerAgent>();
+					case BLUE_AGENT_TAG:
+						this.blueAgent = tr.GetComponent<PlayerAgent>();
 						break;
-					case AGENT_RED_TAG:
-						this.playerAgentRed = tr.GetComponent<PlayerAgent>();
+					case RED_AGENT_TAG:
+						this.redAgent = tr.GetComponent<PlayerAgent>();
 						break;
-					case REWARD_BLUE_TAG:
-						this.rewardTextBlue = tr.GetComponent<TextMeshPro>();
+					case BLUE_INFO_TAG:
+						this.blueBattleInfo = tr.GetComponent<BattleInfo>();
 						break;
-					case REWARD_RED_TAG:
-						this.rewardTextRed = tr.GetComponent<TextMeshPro>();
-						break;
-					default:
+					case RED_INFO_TAG:
+						this.redBattleInfo = tr.GetComponent<BattleInfo>();
 						break;
 				}
 			}
@@ -63,12 +62,12 @@ namespace PAPIOnline
 
 		public PlayerAgent GetRival(string playerTag)
 		{
-			return playerTag.Equals(AGENT_BLUE_TAG) ? playerAgentRed : playerAgentBlue;
+			return playerTag.Equals(BLUE_AGENT_TAG) ? redAgent : blueAgent;
 		}
 
-		public TextMeshPro GetRewardText(string playerTag)
+		public BattleInfo GetBattleInfo(string playerTag)
 		{
-			return playerTag.Equals(AGENT_BLUE_TAG) ? rewardTextBlue : rewardTextRed;
+			return playerTag.Equals(BLUE_AGENT_TAG) ? blueBattleInfo : redBattleInfo;
 		}
 
 		public Vector3 GetPosition()

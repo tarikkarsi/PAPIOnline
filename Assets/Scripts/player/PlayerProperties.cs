@@ -27,7 +27,24 @@ namespace PAPIOnline
 	public class PlayerProperties
 	{
 		public static int HEALTH_POTION_FILL = 50;
+
 		public static int MANA_POTION_FILL = 25;
+
+		public static int MAX_HEALTH = 1000;
+
+		public static int MAX_MANA = 1000;
+
+		public static int MAX_SPEED = 3;
+
+		public static int MAX_DEFENSE = 25;
+
+		public static int MAX_DAMAGE = 30;
+
+		public static int MAX_MANA_POTION = 10;
+
+		public static int MAX_HEALTH_POTION = 10;
+
+		public static int MAX_ATTACK_RANGE = 4;
 
 		// Indicates player's capacity
 		public int healthCapacity;

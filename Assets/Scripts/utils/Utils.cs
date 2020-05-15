@@ -17,7 +17,7 @@ using System.Collections.Generic;
 namespace PAPIOnline
 {
 
-	public static class Utils
+	public class Utils
 	{
 
 		public static float GetDistance(IPlayer from, IPlayer to)

@@ -19,7 +19,7 @@ namespace PAPIOnline
 	{
 
 		public WarriorAgent(string name, bool requestDecision = true)
-			: base(name, WarriorProperties.warriorProps, WarriorProperties.warriorSkills, requestDecision)
+			: base(name, WarriorProperties.GetWarriorProps(), WarriorProperties.GetWarriorSkills(), requestDecision)
 		{
 		}
 

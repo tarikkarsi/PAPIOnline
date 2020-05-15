@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 5960022519538812710}
   m_Layer: 0
   m_Name: WarriorBlue
-  m_TagString: agentBlue
+  m_TagString: blueAgent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -349,7 +349,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5934191127971568270}
   m_LocalRotation: {x: 0, y: 0.9238796, z: -0, w: -0.38268325}
-  m_LocalPosition: {x: 30, y: 1.12, z: 30}
+  m_LocalPosition: {x: 20, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5932072951228143190}
@@ -371,7 +371,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 5000
   hasUpgradedFromAgentParameters: 1
-  maxStep: 50000
+  MaxStep: 10000
 --- !u!114 &1118862419464201063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,15 +385,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 78
-    numStackedVectorObservations: 1
-    vectorActionSize: 050000000900000003000000
-    vectorActionDescriptions: []
-    vectorActionSpaceType: 0
+    VectorObservationSize: 145
+    NumStackedVectorObservations: 1
+    VectorActionSize: 050000000900000003000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: BehaviorBlue
+  m_BehaviorName: AgentBlue
   TeamId: 0
   m_UseChildSensors: 1
 --- !u!114 &-4328162991864299810
@@ -411,12 +411,11 @@ MonoBehaviour:
   m_SensorName: RPSensorBlue
   m_DetectableTags:
   - wall
-  - agentBlue
-  - agentRed
+  - redAgent
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 60
   m_SphereCastRadius: 0.5
-  m_RayLength: 20
+  m_RayLength: 70
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291

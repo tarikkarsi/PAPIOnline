@@ -5,10 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - wall
-  - agentBlue
-  - agentRed
-  - rewardBlue
-  - rewardRed
+  - blueAgent
+  - redAgent
+  - blueInfo
+  - redInfo
   layers:
   - Default
   - TransparentFX

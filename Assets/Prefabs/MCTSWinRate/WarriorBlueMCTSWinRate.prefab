@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 5960022519538812710}
   m_Layer: 0
   m_Name: WarriorBlueMCTSWinRate
-  m_TagString: agentBlue
+  m_TagString: blueAgent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -371,7 +371,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  maxStep: 50000
+  MaxStep: 50000
   rewardType: 0
 --- !u!114 &1118862419464201063
 MonoBehaviour:
@@ -386,11 +386,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 78
-    numStackedVectorObservations: 1
-    vectorActionSize: 050000000900000003000000
-    vectorActionDescriptions: []
-    vectorActionSpaceType: 0
+    VectorObservationSize: 78
+    NumStackedVectorObservations: 1
+    VectorActionSize: 050000000900000003000000
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
@@ -412,8 +412,7 @@ MonoBehaviour:
   m_SensorName: RPSensorBlue
   m_DetectableTags:
   - wall
-  - agentBlue
-  - agentRed
+  - redAgent
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 60
   m_SphereCastRadius: 0.5

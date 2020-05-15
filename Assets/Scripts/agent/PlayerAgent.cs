@@ -12,6 +12,7 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
@@ -32,12 +33,14 @@ namespace PAPIOnline
         private PlayerRewards rewards;
 
         private Rigidbody agentRB;
-        private TextMeshPro rewardText;
+        private BattleInfo battleInfo;
 
         private PlayerMetrics previousPlayerMetrics = new PlayerMetrics();
         private PlayerMetrics previousEnemyMetrics = new PlayerMetrics();
 
         private volatile bool requestDecision = true;
+        
+        int[] skillMasks;
 
         public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true)
         {
@@ -55,7 +58,7 @@ namespace PAPIOnline
             // Initialize enemy
             this.battleArena = GetComponentInParent<BattleArena>();
             this.enemy = battleArena.GetRival(tag).GetPlayer();
-            this.rewardText = battleArena.GetRewardText(tag);
+            this.battleInfo = battleArena.GetBattleInfo(tag);
             // Initialize player rewards
             this.rewards = new PlayerRewards(this.player.GetName(), MaxStep);
         }
@@ -76,7 +79,7 @@ namespace PAPIOnline
         public override void OnEpisodeBegin()
         {
 			// Set position relative to battle arena
-            Vector3 position = CompareTag(BattleArena.AGENT_BLUE_TAG) ? new Vector3(30f, 0f, 30f) : new Vector3(-30f, 0f, -30f);
+            Vector3 position = CompareTag(BattleArena.BLUE_AGENT_TAG) ? new Vector3(20f, 0f, 20f) : new Vector3(-20f, 0f, -20f);
             position += battleArena.GetPosition();
             this.transform.position = position;
 
@@ -89,21 +92,21 @@ namespace PAPIOnline
 
         public override void OnActionReceived(float[] vectorAction)
         {
-            // Debug.Log("Agent Move Action1 " + vectorAction[0]);
-            // Debug.Log("Agent Skill Action2 " + vectorAction[1]);
-            // Debug.Log("Agent Potion Action2 " + vectorAction[2]);
+            //Debug.Log("Agent Move Action " + vectorAction[0]);
+            //Debug.Log("Agent Skill Action " + vectorAction[1]);
+            //Debug.Log("Agent Potion Action " + vectorAction[2]);
 
             // Save current player and enemy metrics before any action
             SaveCurrentMetrics();
 
             // Make move actions
-            MoveAction(Mathf.FloorToInt(vectorAction[0]));
+            MoveAction((int) vectorAction[0]);
 
             // Make skill and attack actions
-            SkillAction(Mathf.FloorToInt(vectorAction[1]), enemy);
+            SkillAction((int) vectorAction[1], enemy);
 
             // Make potion actions
-            PotionAction(Mathf.FloorToInt(vectorAction[2]));
+            PotionAction((int) vectorAction[2]);
 
             // Give suitable rewards for this state
             GiveRewards();
@@ -117,39 +120,35 @@ namespace PAPIOnline
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            // NORMALIZE ALL OBSERVATIONS, BECAUSE TENSORFLOW CANNOT NORMALIZE PROPERLY!!!
             // Player Properties
             // Position information
-            sensor.AddObservation(player.GetPosition());
-
-            // Health capacity
-            sensor.AddObservation(player.GetHealthCapacity());
+            sensor.AddObservation((player.GetPosition().x - battleArena.GetPosition().x) / BattleArena.WIDTH);
+            sensor.AddObservation((player.GetPosition().z - battleArena.GetPosition().z) / BattleArena.HEIGHT);
 
             // Health information
-            sensor.AddObservation(player.GetHealth());
+            sensor.AddObservation(player.GetHealth() / PlayerProperties.MAX_HEALTH);
 
             // Health potion count
-            sensor.AddObservation(player.GetHealthPotionCount());
-
-            // Mana capacity
-            sensor.AddObservation(player.GetManaCapacity());
+            sensor.AddObservation(player.GetHealthPotionCount() / PlayerProperties.MAX_HEALTH_POTION);
 
             // Mana information
-            sensor.AddObservation(player.GetMana());
+            sensor.AddObservation(player.GetMana() / PlayerProperties.MAX_MANA);
 
             // Mana potion count
-            sensor.AddObservation(player.GetManaPotionCount());
+            sensor.AddObservation(player.GetManaPotionCount() / PlayerProperties.MAX_MANA_POTION);
 
             // Speed information
-            sensor.AddObservation(player.GetSpeed());
+            sensor.AddObservation(player.GetSpeed() / PlayerProperties.MAX_SPEED);
 
             // Defense information
-            sensor.AddObservation(player.GetDefense());
+            sensor.AddObservation(player.GetDefense() / PlayerProperties.MAX_DEFENSE);
 
             // Damage information
-            sensor.AddObservation(player.GetDamage());
+            sensor.AddObservation(player.GetDamage() / PlayerProperties.MAX_DAMAGE);
 
 			// Attack range information
-            sensor.AddObservation(player.GetAttackRange());
+            sensor.AddObservation(player.GetAttackRange() / PlayerProperties.MAX_ATTACK_RANGE);
 
             // Stun information
             sensor.AddObservation(player.IsStunned());
@@ -160,47 +159,52 @@ namespace PAPIOnline
             // Skill information
             IAttackSkill attackSkill;
 			IBuffSkill buffSkill;
+            IBuffSkill debuffSkill;
             foreach (ISkill skill in player.GetSkills())
             {
                 sensor.AddObservation(skill.IsAvailable());
-                sensor.AddObservation((int)skill.GetSkillKind());
-                sensor.AddObservation(skill.GetManaConsumption());
-                sensor.AddObservation(skill.GetTimeout());
+                sensor.AddOneHotObservation((int)skill.GetSkillKind(), 3);
+                sensor.AddObservation(skill.GetManaConsumption() / SkillProperties.MAX_MANA_CONSUMPTION);
+                sensor.AddObservation(skill.GetTimeout() / SkillProperties.MAX_TIMEOUT);
 
 				// attack and buff skill observations should be equal to preserve total observation count
 				// observation for attack skill
 				if (skill.GetSkillKind() == SkillKind.ATTACK)
 				{
                     attackSkill = (IAttackSkill)skill;
-                    sensor.AddObservation(attackSkill.GetDamage());
-                    sensor.AddObservation(attackSkill.GetRange());
+                    debuffSkill = attackSkill.GetDebuff();
+                    sensor.AddObservation(attackSkill.GetDamage() / SkillProperties.MAX_DAMAGE);
+                    sensor.AddObservation(attackSkill.GetRange() / SkillProperties.MAX_RANGE);
                     sensor.AddObservation(attackSkill.HasDebuff());
-                    sensor.AddObservation(attackSkill.GetDebuffPercentage());
+                    sensor.AddObservation(attackSkill.GetDebuffPercentage() / SkillProperties.MAX_DEBUFF_PERCENTAGE);
+                    sensor.AddOneHotObservation(debuffSkill != null ? (int) debuffSkill.GetBuffKind() : -1, BuffKindExtensions.Count);
                 }
-				// observation for buff skill
+				// observation for buff skill, added one dummy observation to be equal to attack skill observations
 				else
 				{
                     buffSkill = (IBuffSkill)skill;
-                    sensor.AddObservation(buffSkill.GetDuration());
-                    sensor.AddObservation(buffSkill.GetAmount());
-                    sensor.AddObservation((int)buffSkill.GetBuffKind());
+                    sensor.AddObservation(buffSkill.GetDuration() / SkillProperties.MAX_DURATION);
+                    sensor.AddObservation(buffSkill.GetAmount() / SkillProperties.MAX_AMOUNT);
+                    sensor.AddOneHotObservation((int)buffSkill.GetBuffKind(), BuffKindExtensions.Count);
                     sensor.AddObservation(buffSkill.IsPeriodic());
+                    sensor.AddObservation(0);
                 }
             }
 
             // Distance between enemy
-            sensor.AddObservation(Utils.GetDistance(player, enemy));          
+            sensor.AddObservation(Utils.GetDistance(player, enemy) / BattleArena.MAX_DISTANCE);          
          
             // Enemy properties
             // Position information
-            sensor.AddObservation(enemy.GetPosition());
+            sensor.AddObservation((enemy.GetPosition().x - battleArena.GetPosition().x) / BattleArena.WIDTH);
+            sensor.AddObservation((enemy.GetPosition().z - battleArena.GetPosition().z) / BattleArena.HEIGHT);
 
             // debuff information
 			// maximum three debuff information
-            int debuffCount = enemy.GetAppliedDebuffs().Count;
+            IList<IBuffSkill> debuffs = enemy.GetAppliedDebuffs();
             for (int i = 0; i < 3; i++)
 			{
-                sensor.AddObservation(i < debuffCount ? (int)enemy.GetAppliedDebuffs()[i].GetBuffKind() : -1);
+                sensor.AddOneHotObservation(i < debuffs.Count ? (int)debuffs[i].GetBuffKind() : -1, BuffKindExtensions.Count);
 			}
         }
 
@@ -208,7 +212,8 @@ namespace PAPIOnline
         {
             // Set actions masks
             actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(player));
-            actionMasker.SetMask(SKILL_BRANCH_INDEX, Utils.GetSkillMasks(player, enemy));
+            skillMasks = Utils.GetSkillMasks(player, enemy);
+            actionMasker.SetMask(SKILL_BRANCH_INDEX, skillMasks);
             actionMasker.SetMask(POTION_BRANCH_INDEX, Utils.GetPotionMasks(player));
         }
 
@@ -216,7 +221,7 @@ namespace PAPIOnline
         {
             previousPlayerMetrics.Set(player);
             previousEnemyMetrics.Set(enemy);
-            rewardText.text = GetCumulativeReward().ToString("0.00000");
+            battleInfo.UpdateInfo(player, enemy, GetCumulativeReward());
         }
 
         private void GiveRewards()
@@ -268,15 +273,19 @@ namespace PAPIOnline
                 case 4:
                     rotation = transform.up * -1f;
                     break;
-
             }
 
             // Zero means no move
             if (action != 0)
             {
-                transform.Rotate(rotation, Time.deltaTime * 200f);
-                agentRB.AddForce(direction * 2f, ForceMode.VelocityChange);
+                //UnityEngine.Debug.LogError("move action " + action + " direction " + direction.ToString());
+                transform.Rotate(rotation, Time.fixedDeltaTime * 200f);
+                agentRB.AddForce(direction * 2f * player.GetSpeed(), ForceMode.VelocityChange);
                 player.SetPosition(transform.position);
+            }
+            if (action > 4)
+            {
+                UnityEngine.Debug.LogError(player.GetName() + " move action out of bound " + action);
             }
         }
 
@@ -286,12 +295,21 @@ namespace PAPIOnline
             // 1 - skill count, means using skill
             if (action > 0 && action < player.GetSkillCount() + 1)
             {
-                player.UseSkill(action - 1, enemy);
+                bool result = player.UseSkill(action - 1, enemy);
+                if (!result)
+                {
+                    UnityEngine.Debug.LogError(player.GetName() + " skill masks " + string.Join(",", skillMasks));
+                    UnityEngine.Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
+                }
             }
             // Skill count + 1, means normal attack
             else if (action == player.GetSkillCount() + 1)
             {
                 player.Attack(enemy);
+            }
+            else if (action != 0)
+            {
+                UnityEngine.Debug.LogError(player.GetName() + " skill action out of bound " + action);
             }
         }
 
@@ -307,6 +325,10 @@ namespace PAPIOnline
             else if (action == 2)
             {
                 player.UseManaPotion();
+            }
+            else if (action != 0)
+            {
+                UnityEngine.Debug.LogError(player.GetName() + " potion action out of bound " + action);
             }
         }
 

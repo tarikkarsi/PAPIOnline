@@ -24,4 +24,9 @@ namespace PAPIOnline
 		DEFENSE,
 	}
 
+	public static class BuffKindExtensions 
+	{
+		public static int Count = 6;
+	}
+
 }

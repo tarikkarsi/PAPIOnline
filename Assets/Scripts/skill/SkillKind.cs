@@ -25,4 +25,8 @@ namespace PAPIOnline
 		DEBUFF
 	}
 
+	public static class SkillKindExtensions 
+	{
+			public static int Count = 3;
+	}
 }

@@ -270,17 +270,21 @@ namespace PAPIOnline
 
 		public void Move(Vector3 direction)
 		{
-			this.properties.position += direction * this.GetSpeed();
+			if (this.IsAvailable())
+			{
+				this.properties.position += direction * this.GetSpeed();
+			}
 		}
 
-		public void Attack(IPlayer target)
+		public bool Attack(IPlayer target)
 		{
 			// Check availability and distance
 			if (this.IsAvailable() && Utils.CanAttack(this, target))
 			{
 				target.DecreaseHealth(this.GetDamage() - target.GetDefense());
 				this.attackAnimationTimer = ATTACK_ANIMATION_DURATION;
-				// Debug.Log(GetName() + " is attacked to enemy (Player::Attack)");
+				//Debug.LogError(GetName() + " is attacked to enemy " + (this.GetDamage() - target.GetDefense()));
+				return true;
 			}
 			else
 			{
@@ -293,9 +297,10 @@ namespace PAPIOnline
 					Debug.LogError(GetName() + " is not close enough (Player::Attack)");
 				}
 			}
+			return false;
 		}
 
-		public void UseHealthPotion()
+		public bool UseHealthPotion()
 		{
 			// Check health potion count and health capacity
 			if (this.properties.healthPotionCount > 0 && this.properties.health < this.properties.healthCapacity)
@@ -309,12 +314,12 @@ namespace PAPIOnline
 
 				this.properties.health += fillAmount;
 				this.properties.healthPotionCount--;
-
 				// Debug.Log(GetName() + " used health potion and filled " + fillAmount + " of health (Player::UseHealthPotion)");
+				return true;
 			}
 			else
 			{
-				if (this.properties.manaPotionCount == 0)
+				if (this.properties.healthPotionCount == 0)
 				{
 					Debug.LogError(GetName() + " has not enough health potion (Player::UseHealthPotion)");
 				}
@@ -323,9 +328,10 @@ namespace PAPIOnline
 					Debug.LogError(GetName() + " health already full (Player::UseHealthPotion)");
 				}
 			}
+			return false;
 		}
 
-		public void UseManaPotion()
+		public bool UseManaPotion()
 		{
 			// Check mana potion count and mana capacity
 			if (this.properties.manaPotionCount > 0 && this.properties.mana < this.properties.manaCapacity)
@@ -339,8 +345,8 @@ namespace PAPIOnline
 
 				this.properties.mana += fillAmount;
 				this.properties.manaPotionCount--;
-
 				// Debug.Log(GetName() + " used mana potion and filled " + fillAmount + " of mana (Player::UseManaPotion)");
+				return true;
 			}
 			else
 			{
@@ -353,9 +359,10 @@ namespace PAPIOnline
 					Debug.LogError(GetName() + " mana already full (Player::UseManaPotion)");
 				}
 			}
+			return false;
 		}
 
-		public void UseSkill(int skillIndex, IPlayer target)
+		public bool UseSkill(int skillIndex, IPlayer target)
 		{
 			// Use skill on target enemy
 			ISkill skill = this.skills[skillIndex];
@@ -367,6 +374,7 @@ namespace PAPIOnline
 				{
 					this.skillAnimationTimer = SKILL_ANIMATION_DURATION;
 					// Debug.Log(GetName() + " used skill with index: " + skillIndex + "(Player::UseSkill)");
+					return true;
 				}
 				else
 				{
@@ -375,11 +383,9 @@ namespace PAPIOnline
 			}
 			else
 			{
-				if (!this.IsAvailable())
-				{
-					Debug.LogError(GetName() + " is not available to use skill with index: " + skillIndex + " (Player::UseSkill)");
-				}
+				Debug.LogError(GetName() + " is not available to use skill with index: " + skillIndex + " (Player::UseSkill)");
 			}
+			return false;
 		}
 
 		public ISkill[] GetSkills()

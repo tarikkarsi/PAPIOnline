@@ -15,14 +15,16 @@
 namespace PAPIOnline
 {
 
-	public static class WarriorProperties
+	public class WarriorProperties
 	{
 
-		public static PlayerProperties warriorProps = new PlayerProperties.PlayerPropertiesBuilder()
+		public static PlayerProperties GetWarriorProps()
+		{ 
+			return new PlayerProperties.PlayerPropertiesBuilder()
 			.HealthCapacity(500)
 			.Health(500)
 			.ManaCapacity(500)
-			.AttackRange(1)
+			.AttackRange(3)
 			.Mana(500)
 			.Defense(10)
 			.Damage(14)
@@ -30,16 +32,19 @@ namespace PAPIOnline
 			.HealthPotionCount(10)
 			.ManaPotionCount(10)
 			.Build();
+		}
 
-		public static ISkill[] warriorSkills = new ISkill[]
+		public static ISkill[] GetWarriorSkills()
 		{
+			return new ISkill[]
+			{
 			// attack skill with low damage
 			new AttackSkill(
 				"Attack1",  // name
 				10,         // mana consumption
 				3,          // timeout
 				15,         // damage
-				5           // range
+				7           // range
 			),
 
 			// attack skill with stun debuff effect
@@ -48,7 +53,7 @@ namespace PAPIOnline
 				15,         // mana consumption
 				4,          // timeout
 				20,         // damage
-				5,          // range
+				7,          // range
 				new DebuffSkill(    // debuff
 					"Debuff1",      // name
 					0,              // mana consumption
@@ -67,7 +72,7 @@ namespace PAPIOnline
 				20,         // mana consumption
 				5,          // timeout
 				25,         // damage
-				5,          // range
+				7,          // range
 				new DebuffSkill(    // debuff
 					"Debuff2",      // name
 					0,              // mana consumption
@@ -86,7 +91,7 @@ namespace PAPIOnline
 				25,         // mana consumption
 				6,          // timeout
 				35,         // damage
-				5           // range
+				7           // range
 			),
 
 			// attack skill with heavy damage
@@ -95,7 +100,7 @@ namespace PAPIOnline
 				35,         // mana consumption
 				7,          // timeout
 				45,         // damage
-				5           // range
+				7           // range
 			),
 
 			// buff skill which enhances damage
@@ -118,6 +123,7 @@ namespace PAPIOnline
 				0.5f            // amount
 			)
 		};
+		}
 
 	}
 
