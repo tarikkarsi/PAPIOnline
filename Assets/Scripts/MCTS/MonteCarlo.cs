@@ -26,16 +26,15 @@ namespace PAPIOnline
         private Game game;
         private int UCB1ExploreParam;
         private Dictionary<int, MonteCarloNode> nodes;
-        private volatile bool mctsRun;
+        private int maxSimulation;
         private int maxDepth;
-        private Action mctsFinished;
-        private static readonly CountdownEvent countdown = new CountdownEvent(2);
+        private CountdownEvent countdown;
 
-        public MonteCarlo(Game game, int maxDepth, Action mctsFinished, int UCB1ExploreParam = 2)
+        public MonteCarlo(Game game, int maxSimulation, int maxDepth, int UCB1ExploreParam)
         {
             this.game = game;
+            this.maxSimulation = maxSimulation;
             this.maxDepth = maxDepth;
-            this.mctsFinished = mctsFinished;
             this.UCB1ExploreParam = UCB1ExploreParam;
             this.nodes = new Dictionary<int, MonteCarloNode>();
         }
@@ -48,53 +47,35 @@ namespace PAPIOnline
 
         public void MakeNode(GameState state)
         {
-            if (!this.nodes.ContainsKey(state.GetHashCode()))
+            if (!this.nodes.ContainsKey(state.GetId()))
             {
                 bool[] unexpandedActions = this.game.LegalActions(state);
                 MonteCarloNode node = new MonteCarloNode(null, -1, state, unexpandedActions);
-                this.nodes[state.GetHashCode()] = node;
+                this.nodes[state.GetId()] = node;
             }
         }
 
         public void RunSearch()
         {
-            mctsRun = true;
             GameState state = game.GetInitialState();
-
-            if (state.GetPlayer().GetName().Equals("agentBlue"))
-            {
-                countdown.Reset();
-            }
 
             this.MakeNode(state);
             int totalSims = 0;
 			// Run until time runs out
-            while (mctsRun)
+            while (totalSims <= maxSimulation)
             {
                 MonteCarloNode node = this.Select(state);
-                PlayerKind winner = this.game.Winner(node.state);
+                float value = 0;
 
-                if (node.IsLeaf() == false && winner == PlayerKind.NONE)
+                if (node.IsLeaf() == false)
                 {
                     node = this.Expand(node);
-                    winner = this.Simulate(node, maxDepth);
+                    value = this.Simulate(node, maxDepth);
                 }
-                this.Backpropagate(node, winner);
+                this.Backpropagate(node, value);
 
                 totalSims++;
             }
-
-            countdown.Signal();
-            countdown.Wait();
-
-            mctsFinished();
-        }
-
-
-        public async void EndSearch()
-        {
-            await Task.Delay(15);
-            mctsRun = false;
         }
 
         /*
@@ -103,7 +84,7 @@ namespace PAPIOnline
 		 */
         public MonteCarloNode Select(GameState state)
         {
-            MonteCarloNode node = this.nodes[state.GetHashCode()];
+            MonteCarloNode node = this.nodes[state.GetId()];
 
             while (node.IsFullyExpanded() && !node.IsLeaf())
             {
@@ -137,7 +118,7 @@ namespace PAPIOnline
             GameState childState = this.game.NextState(node.state, action);
             bool[] childActions = this.game.LegalActions(childState);
             MonteCarloNode childNode = node.Expand(action, childState, childActions);
-            this.nodes[childState.GetHashCode()] = childNode;
+            this.nodes[childState.GetId()] = childNode;
             return childNode;
         }
 
@@ -145,17 +126,16 @@ namespace PAPIOnline
 		 * Phase 3: Simulation
 		 * From given node, play the game until a terminal state, then return winner
 		 */
-        public PlayerKind Simulate(MonteCarloNode node, int maxDepth)
+        public float Simulate(MonteCarloNode node, int maxDepth)
         {
             GameState state = node.state;
             IPlayer player = state.GetPlayer().ClonePlayer();
             IPlayer enemy = state.GetEnemy().ClonePlayer();
             PlayerKind turn = state.GetTurn();
-            PlayerKind winner;
             int depth = 0;
 
             // Continue until someone wins, specific depth is reached or time is up
-            while ((winner = this.game.Winner(player, enemy)) == PlayerKind.NONE && depth < maxDepth && mctsRun)
+            while (!player.IsDead() && !enemy.IsDead() && depth < maxDepth)
             {
                 int action = this.game.RandomLegalAction(player, enemy, turn);
                 turn = this.game.MakeAction(player, enemy, action, turn);
@@ -163,33 +143,21 @@ namespace PAPIOnline
                 depth++;
             }
 
-            // Calculate winner manually if no one wins
-            if (winner == PlayerKind.NONE)
-            {
-                winner = CalculateWinner(state.GetPlayer(), player, state.GetEnemy(), enemy);
-            }
-
-            return winner;
+            // Calculate value from last states
+            return CalculateValue(state.GetPlayer(), player, state.GetEnemy(), enemy);
         }
 
         /*
 		 * Phase 4: Backpropagation
 		 * From given node, propagate plays and winner to ancestors' statistics
 		 */
-        public void Backpropagate(MonteCarloNode node, PlayerKind winner)
+        public void Backpropagate(MonteCarloNode node, float value)
         {
             while (node != null)
             {
                 node.numberOfPlays++;
-                if (winner == PlayerKind.PLAYER)
-                {
-                    node.numberOfWins++;
-                }
-                else if (winner == PlayerKind.ENEMY)
-                {
-                    node.numberOfLoses++;
-                }
-                // Parent's choice
+                node.totalValue += value;
+                // Update parent
                 node = node.parent;
             }
         }
@@ -198,7 +166,7 @@ namespace PAPIOnline
 
         public MonteCarloNode GetRootNode()
         {
-             return this.nodes[game.GetInitialState().GetHashCode()];
+             return this.nodes[game.GetInitialState().GetId()];
         }
 
         public ISet<int> ConvertMCTSActions(float[] vectorAction)
@@ -206,26 +174,29 @@ namespace PAPIOnline
             return this.game.ConvertMCTSActions(vectorAction);
         }
 
-        private PlayerKind CalculateWinner(IPlayer playerFirstState, IPlayer playerLastState,
+        private float CalculateValue(IPlayer playerFirstState, IPlayer playerLastState,
 			IPlayer enemyFirstState, IPlayer enemyLastState)
         {
             // Calculate the remaining time with dividing remaining health to health difference
             float playerHealthDiff = playerFirstState.GetHealth() - playerLastState.GetHealth();
             float enemyHealthDiff = enemyFirstState.GetHealth() - enemyLastState.GetHealth();
-
+            // Prevent divide by zero
+            playerHealthDiff = playerHealthDiff == 0 ? 1 : playerHealthDiff;
+            enemyHealthDiff = enemyHealthDiff == 0 ? 1 : enemyHealthDiff;
+            // Return remaining time difference
             float playerRemainingTime = playerLastState.GetHealth() / playerHealthDiff;
             float enemyRemainingTime = enemyLastState.GetHealth() / enemyHealthDiff;
-            return playerRemainingTime >= enemyRemainingTime ? PlayerKind.PLAYER : PlayerKind.ENEMY;
+            return playerRemainingTime - enemyRemainingTime;
         }
 
-        private PlayerKind CalculateWinner2(IPlayer playerFirstState, IPlayer playerLastState,
+        private float CalculateValue2(IPlayer playerFirstState, IPlayer playerLastState,
             IPlayer enemyFirstState, IPlayer enemyLastState)
         {
             float playerTotalHealth = playerLastState.GetHealth() + playerLastState.GetHealthPotionCount() * PlayerProperties.HEALTH_POTION_FILL;
             float playerTotalMana = playerLastState.GetMana() + playerLastState.GetManaPotionCount() * PlayerProperties.MANA_POTION_FILL;
             float enemyTotalHealth = enemyLastState.GetHealth() + enemyLastState.GetHealthPotionCount() * PlayerProperties.HEALTH_POTION_FILL;
             float enemyTotalMana = enemyLastState.GetMana() + enemyLastState.GetManaPotionCount() * PlayerProperties.MANA_POTION_FILL;
-            return playerTotalHealth + playerTotalMana >= enemyTotalHealth + enemyTotalMana ? PlayerKind.PLAYER : PlayerKind.ENEMY;
+            return (playerTotalHealth + playerTotalMana) - (enemyTotalHealth + enemyTotalMana);
         }
 
     }

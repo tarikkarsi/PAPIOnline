@@ -92,7 +92,7 @@ namespace PAPIOnline
 		public bool dead;
 
 		// Indicates player's position
-		public Vector3 position;
+		public Vector3 position = new Vector3();
 
 		public PlayerProperties Clone()
 		{
@@ -109,7 +109,9 @@ namespace PAPIOnline
 			playerProperties.attackRange = attackRange;
 			playerProperties.stunned = stunned;
 			playerProperties.dead = dead;
-			playerProperties.position = position;
+			playerProperties.position.x = position.x;
+			playerProperties.position.y = position.y;
+			playerProperties.position.z = position.z;
 			playerProperties.level = level;
 			playerProperties.money = money;
 			playerProperties.experience = experience;
@@ -243,7 +245,9 @@ namespace PAPIOnline
 				playerProperties.attackRange = attackRange;
 				playerProperties.stunned = stunned;
 				playerProperties.dead = dead;
-				playerProperties.position = position;
+				playerProperties.position.x = position.x;
+				playerProperties.position.y = position.y;
+				playerProperties.position.z = position.z;
 				playerProperties.level = level;
 				playerProperties.money = money;
 				playerProperties.experience = experience;

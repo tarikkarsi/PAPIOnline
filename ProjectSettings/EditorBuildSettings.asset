@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PapiOnline.unity
-    guid: 2e521227841d043b6aae0fb9dced5c64
+    path: Assets/Scenes/PapiOnlineMCTSAction.unity
+    guid: 8812db664ec23c54d879234bae50a8df
   m_configObjects: {}

@@ -11,6 +11,7 @@
  *   Name:           Date:        Description:
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
+using UnityEngine;
 
 namespace PAPIOnline
 {
@@ -21,6 +22,8 @@ namespace PAPIOnline
 		public MonterCarloRewardType rewardType;
 		private MonteCarloManager monteCarloManager;
 
+		private float oldTimeScale;
+
 		public WarriorMCTSAgent() : base("WarriorMCTS", false)
 		{
 		}
@@ -29,36 +32,42 @@ namespace PAPIOnline
 		{
 			base.Start();
 			// Initialize monte carlo manager
-			this.monteCarloManager = new MonteCarloManager(player, enemy, GiveMCTSReward, rewardType);
-		}
-
-		public void GiveMCTSReward(float mctsReward)
-		{
-			// Reward for MCTS result
-			// add %10 of this value
-			AddReward(mctsReward / 10);
-
-			//UnityEngine.Debug.LogError("MCTS Reward = " + (mctsReward / 10));
-
-			// Request new decision
-			RequestDecision();
+			this.monteCarloManager = new MonteCarloManager(player, enemy, rewardType);
+			this.oldTimeScale = Time.timeScale;
 		}
 
 		public override void OnActionReceived(float[] vectorAction)
 		{
+			IPlayer mctsPlayer = null, mctsEnemy = null;
+			// MCTS action reward should be calculated with the state before action done
+			// So save the current state of player and enemy
 			if (rewardType == MonterCarloRewardType.ACTION)
 			{
-				// Get MCTS action reward before action taken
-				monteCarloManager.GetReward(player, enemy, vectorAction);
-				base.OnActionReceived(vectorAction);
+				mctsPlayer = player.ClonePlayer();
+				mctsEnemy = enemy.ClonePlayer();	
 			}
-			else
+			// Continue ordinary action process 
+			base.OnActionReceived(vectorAction);
+			// MCTS win rate reward should be calculated with the state after action done
+			// So get the current state of player and enemy
+			if (rewardType == MonterCarloRewardType.WIN_RATE)
 			{
-				// Get MCTS win rate reward after action taken
-				base.OnActionReceived(vectorAction);
-				monteCarloManager.GetReward(player, enemy, vectorAction);
+				mctsPlayer = player;
+				mctsEnemy = enemy;
 			}
 			
+			// Pause the game when MCTS runs
+			Time.timeScale = 0;
+			// Reward for MCTS result
+			float mctsReward = monteCarloManager.GetReward(mctsPlayer, mctsEnemy, vectorAction) / 10f;
+			// Resume game after MCTS finishes
+			Time.timeScale = this.oldTimeScale;
+
+			// add %10 of this value
+			AddReward(mctsReward / 10f);
+
+			// Request new decision
+			RequestDecision();
 		}
 
 	}

@@ -86,7 +86,9 @@ namespace PAPIOnline
 
 		public void SetPosition(Vector3 position)
 		{
-			this.properties.position = position;
+			this.properties.position.x = position.x;
+			this.properties.position.y = position.y;
+			this.properties.position.z = position.z;
 		}
 
 		public void IncreaseSpeed(float amount)
@@ -273,6 +275,10 @@ namespace PAPIOnline
 			if (this.IsAvailable())
 			{
 				this.properties.position += direction * this.GetSpeed();
+			}
+			else
+			{
+				Debug.LogError(GetName() + " is not available (Player::Move)");
 			}
 		}
 

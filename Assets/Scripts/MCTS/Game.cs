@@ -12,26 +12,27 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace PAPIOnline
 {
 
 	public class Game
 	{
+		private int stateId;
 		private GameState initialState;
 		private float fixedDeltaTime;
 		private GameHelper playerHelper;
 		private GameHelper enemyHelper;
 
-		private static readonly System.Random random = new System.Random();
-
-		public static int RandomNumber(int min, int max)
+		public int RandomNumber(int min, int max)
 		{
-			return random.Next(min, max);
+			return Random.Range(min, max);
 		}
 
 		public Game(IPlayer player, IPlayer enemy, float fixedDeltaTime)
 		{
+			this.stateId = 0;
 			this.playerHelper = new GameHelper(player);
 			this.enemyHelper = new GameHelper(enemy);
 			this.fixedDeltaTime = fixedDeltaTime;
@@ -40,7 +41,8 @@ namespace PAPIOnline
 		public void Reset(IPlayer player, IPlayer enemy)
 		{
 			// Initial state owner is player
-			this.initialState = new GameState(player, enemy, PlayerKind.PLAYER);
+			this.stateId = 0;
+			this.initialState = new GameState(stateId++, player, enemy, PlayerKind.PLAYER);
 		}
 
 		public GameState GetInitialState()
@@ -124,7 +126,7 @@ namespace PAPIOnline
 			UpdatePlayers(newPlayer, newEnemy);
 
 			// Create new state with new player and enemy
-			return new GameState(newPlayer, newEnemy, newTurn);
+			return new GameState(stateId++, newPlayer, newEnemy, newTurn);
 		}
 
 		public PlayerKind MakeAction(IPlayer player, IPlayer enemy, int play, PlayerKind turn)

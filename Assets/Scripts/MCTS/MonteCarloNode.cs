@@ -24,10 +24,9 @@ namespace PAPIOnline
 		public GameState state;
 		public MonteCarloNode parent;
 		public Dictionary<int, MonteCarloNode> children; // Action to node
-
+		public float totalValue;
 		public int numberOfPlays;
 		public int numberOfWins;
-		public int numberOfLoses;
 
 		public MonteCarloNode(MonteCarloNode parent, int action, GameState state, bool[] allActions)
 		{
@@ -146,8 +145,7 @@ namespace PAPIOnline
 		 */
 		public double GetUCB1(int biasParam)
 		{
-			return ((double)this.numberOfWins) / this.numberOfPlays +
-				Math.Sqrt(biasParam * Math.Log(this.parent.numberOfPlays) / this.numberOfPlays);
+			return ((double)this.totalValue) + Math.Sqrt(biasParam * Math.Log(this.parent.numberOfPlays) / this.numberOfPlays);
 		}
 	}
 

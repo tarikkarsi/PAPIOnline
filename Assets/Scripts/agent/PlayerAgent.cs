@@ -40,7 +40,7 @@ namespace PAPIOnline
 
         private volatile bool requestDecision = true;
         
-        int[] skillMasks;
+        protected int[] skillMasks;
 
         public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true)
         {
@@ -278,9 +278,10 @@ namespace PAPIOnline
             // Zero means no move
             if (action != 0)
             {
-                //UnityEngine.Debug.LogError("move action " + action + " direction " + direction.ToString());
+                // Add force to agent rigid body instead of player.Move to make more relalistic movement
                 transform.Rotate(rotation, Time.fixedDeltaTime * 200f);
                 agentRB.AddForce(direction * 2f * player.GetSpeed(), ForceMode.VelocityChange);
+                // Update players position
                 player.SetPosition(transform.position);
             }
             if (action > 4)

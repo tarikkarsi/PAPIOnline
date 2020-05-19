@@ -17,20 +17,18 @@ namespace PAPIOnline
 
 	public class GameState
 	{
-		public static int HASH_CODE = 0;
-
+		private int id = 0;
 		private IPlayer player;
 		private IPlayer enemy;
 		private PlayerKind playerKind;
 		private readonly int hashCode;
 
-		public GameState(IPlayer player, IPlayer enemy, PlayerKind playerKind)
+		public GameState(int id, IPlayer player, IPlayer enemy, PlayerKind playerKind)
 		{
 			this.player = player;
 			this.enemy = enemy;
 			this.playerKind = playerKind;
-			// Increment hash code each state creation
-			this.hashCode = HASH_CODE++;
+			this.id = id;
 		}
 
 		public bool IsPlayer()
@@ -53,9 +51,9 @@ namespace PAPIOnline
 			return this.enemy;
 		}
 
-		public override int GetHashCode()
+		public int GetId()
 		{
-			return this.hashCode;
+			return this.id;
 		}
 	}
 
