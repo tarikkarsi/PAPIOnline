@@ -13,18 +13,10 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace PAPIOnline
 {
-
-	public enum MonterCarloRewardType
-	{
-		WIN_RATE,
-		ACTION,
-	};
 
 	public class MonteCarloManager
 	{
@@ -32,14 +24,12 @@ namespace PAPIOnline
 		public float searchTimeout = 0.15f;
 		public int maxSimulation = 30;
 		public int maxDepth = 50;
-		int UCB1ExploreParam = 2;
+		public int UCB1ExploreParam = 2;
 		private MonteCarlo mcts;
-		private MonterCarloRewardType rewardType;
 
-		public MonteCarloManager(IPlayer player, IPlayer enemy, MonterCarloRewardType rewardType)
+		public MonteCarloManager(IPlayer player, IPlayer enemy)
 		{
 			this.mcts = new MonteCarlo(new Game(player, enemy, fixedDeltaTime), maxSimulation, maxDepth, UCB1ExploreParam);
-			this.rewardType = rewardType;
 		}
 
 		public float GetReward(IPlayer player, IPlayer enemy, float[] vectorAction)
@@ -47,7 +37,7 @@ namespace PAPIOnline
 			// Reset the MCTS
 			this.mcts.Reset(player, enemy);
 			this.mcts.RunSearch();
-			return this.rewardType == MonterCarloRewardType.ACTION ? GiveMCTSActionReward(vectorAction) : GiveMCTSWinRateReward();
+			return GiveMCTSActionReward(vectorAction);
 		}
 
 		public float GiveMCTSActionReward(float[] vectorAction)
@@ -102,18 +92,6 @@ namespace PAPIOnline
 
 			return mctsReward;
 		}
-
-		public float GiveMCTSWinRateReward()
-		{
-			MonteCarloNode result = mcts.GetRootNode();
-			// Calculate reward, for %0 = -0.3, %50 = 0, %100 = 1
-			float winRate = result.numberOfWins / result.numberOfPlays;
-			float mctsReward = (float)(Math.Exp(2.4d * winRate) - 0.42d);
-
-			return mctsReward;
-		}
-
-
 
 	}
 
