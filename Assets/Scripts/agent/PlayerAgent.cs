@@ -92,6 +92,74 @@ namespace PAPIOnline
             RequestDecision();
         }
 
+        public override void Heuristic(float[] actionsOut)
+        {
+            // Reset values
+            actionsOut[MOVE_BRANCH_INDEX] = 0f;
+            actionsOut[SKILL_BRANCH_INDEX] = 0f;
+            actionsOut[POTION_BRANCH_INDEX] = 0f;
+            // Movements
+            if (Input.GetKey(KeyCode.W))
+            {
+                actionsOut[MOVE_BRANCH_INDEX] = 1f;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                actionsOut[MOVE_BRANCH_INDEX] = 2f;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                actionsOut[MOVE_BRANCH_INDEX] = 3f;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                actionsOut[MOVE_BRANCH_INDEX] = 4f;
+            }
+            // Skills
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 1f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 2f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 3f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 4f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 5f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 6f;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 7f;
+            }
+            // Attack
+            if (Input.GetKey(KeyCode.Space))
+            {
+                actionsOut[SKILL_BRANCH_INDEX] = 8f;
+            }
+            // Potions
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                actionsOut[POTION_BRANCH_INDEX] = 1f;
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                actionsOut[POTION_BRANCH_INDEX] = 2f;
+            }
+        }
+
         public override void OnActionReceived(float[] vectorAction)
         {
             //Debug.Log("Agent Move Action " + vectorAction[0]);
