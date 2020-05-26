@@ -59,12 +59,12 @@ namespace PAPIOnline
 			// Pause the game when MCTS runs
 			Time.timeScale = 0;
 			// Reward for MCTS result
-			float mctsReward = monteCarloManager.GetReward(mctsPlayer, mctsEnemy, vectorAction) / 10f;
+			float mctsReward = monteCarloManager.GetReward(mctsPlayer, mctsEnemy, vectorAction);
 			// Resume game after MCTS finishes
 			Time.timeScale = this.oldTimeScale;
 
-			// add %10 of this value
-			AddReward(mctsReward / 10f);
+			// add %50 of this value
+			AddReward(mctsReward / 2f);
 
 			// Request new decision
 			RequestDecision();
