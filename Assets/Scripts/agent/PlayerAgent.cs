@@ -78,6 +78,8 @@ namespace PAPIOnline
 
         public override void OnEpisodeBegin()
         {
+            // Increase play count
+            this.battleInfo.IncreasePlayCount();
 			// Set position relative to battle arena
             Vector3 position = CompareTag(BattleArena.BLUE_AGENT_TAG) ? new Vector3(20f, 0f, 20f) : new Vector3(-20f, 0f, -20f);
             position += battleArena.GetPosition();
@@ -228,6 +230,8 @@ namespace PAPIOnline
         {
             if (enemy.IsDead())
             {
+                // Increase win count
+                this.battleInfo.IncreaseWinCount();
                 // Reward for win
                 SetReward(rewards.GetWinReward());
                 EndEpisode();
