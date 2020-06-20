@@ -39,11 +39,37 @@ namespace PAPIOnline
 		 * This method returns array of indices of not available movements on the next iteration
 		 * Checks character stunned or not, if stunned no movement will be available
 		 */
-		public static int[] GetMoveMasks(IPlayer player)
+		public static int[] GetMoveMasks(PlayerAgent playerAgent, BattleArena battleArena)
 		{
 			// Player can not move when stunned
 			// Starts from 1 because of zero is idle
-			return !player.IsAvailable() ? new int[] { 1, 2, 3, 4 } : new int[0];
+			if (!playerAgent.GetPlayer().IsAvailable())
+			{
+				return new int[] { 1, 2, 3, 4 };
+			}
+
+			List<int> moveMasks = new List<int>();
+			Vector3 playerPos = playerAgent.transform.position;
+			// Check player at the right or edge
+			if (playerPos.x >= battleArena.rightEdge.x || playerPos.x <= battleArena.leftEdge.x)
+			{
+				Vector3 edge = playerPos.x >= battleArena.rightEdge.x ? battleArena.rightEdge : battleArena.leftEdge;
+				// Get angle between edge and players front
+				float angle = Vector3.Angle(edge, playerAgent.transform.forward);
+				// mask moving forward or backward
+				moveMasks.Add((angle <= 90 && angle >= -90) ? 1 : 3);
+			}
+			
+			// Check player at the top or bottom edge
+			if (playerPos.z >= battleArena.topEdge.z || playerPos.z <= battleArena.bottomEdge.z)
+			{
+				Vector3 edge = playerPos.z >= battleArena.topEdge.z ? battleArena.topEdge : battleArena.bottomEdge;
+				// Get angle between top edge and players front
+				float angle = Vector3.Angle(edge, playerAgent.transform.forward);
+				// mask moving forward or backward
+				moveMasks.Add((angle <= 90 && angle >= -90) ? 1 : 3);
+			}
+			return moveMasks.ToArray();
 		}
 
 		/*
@@ -90,15 +116,15 @@ namespace PAPIOnline
 		public static int[] GetPotionMasks(IPlayer player)
 		{
 			List<int> potionMasks = new List<int>();
-			// Check player health is full
+			// Check player health is decreased enough
 			// Check player has enough health potion
-			if (player.GetHealth() == player.GetHealthCapacity() || player.GetHealthPotionCount() == 0)
+			if (player.GetHealthPotionCount() == 0 || player.GetHealthCapacity() == player.GetHealth())
 			{
 				potionMasks.Add(1);
 			}
-			// Check player mana is full
+			// Check player mana is decreased enough
 			// Check player has enough mana potion
-			if (player.GetMana() == player.GetManaCapacity() || player.GetManaPotionCount() == 0)
+			if (player.GetManaPotionCount() == 0 || player.GetManaCapacity() == player.GetMana())
 			{
 				potionMasks.Add(2);
 			}

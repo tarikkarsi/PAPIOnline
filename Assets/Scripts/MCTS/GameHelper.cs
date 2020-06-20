@@ -82,10 +82,9 @@ namespace PAPIOnline
 			}
 
 			// Eliminate potion actions
-			// Check player health is full enough
+			// Check player health is full
 			// Check player has enough health potion
-			if (player.GetHealthCapacity() - player.GetHealth() < PlayerProperties.HEALTH_POTION_FILL
-				|| player.GetHealthPotionCount() == 0)
+			if (player.GetHealthPotionCount() == 0 || player.GetHealthCapacity() == player.GetHealth())
 			{
 				allActions[HEALTH_POTION_INDEX] = false;
 			}
@@ -97,8 +96,7 @@ namespace PAPIOnline
 
 			// Check player mana is full
 			// Check player has enough mana potion
-			if (player.GetManaCapacity() - player.GetMana() < PlayerProperties.MANA_POTION_FILL
-				|| player.GetManaPotionCount() == 0)
+			if (player.GetManaPotionCount() == 0 || player.GetManaCapacity() == player.GetMana())
 			{
 				allActions[MANA_POTION_INDEX] = false;
 			}
@@ -133,8 +131,9 @@ namespace PAPIOnline
 			else if (action == MOVE_INDEX)
 			{
 				Vector3 enemyDirection = Utils.GetDirection(player, enemy);
+				float speed = Utils.GetDistance(player, enemy) / 2;
 				// Multiply direction to move immediately
-				player.Move(enemyDirection * 3.5f);
+				player.Move(enemyDirection * speed);
 			}
 			// Use health potion
 			else if (action == HEALTH_POTION_INDEX)

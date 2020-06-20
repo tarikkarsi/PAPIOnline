@@ -23,7 +23,7 @@ namespace PAPIOnline
 		public float fixedDeltaTime = 0.4f;
 		public float searchTimeout = 0.15f;
 		public int maxSimulation = 30;
-		public int maxDepth = 50;
+		public int maxDepth = 400;
 		public int UCB1ExploreParam = 2;
 		private MonteCarlo mcts;
 
@@ -76,7 +76,8 @@ namespace PAPIOnline
 				}
 			}
 
-			// Move action discarded
+			// No reward will be given if suitable action not found
+			// Move actions eliminated here
 			if (ANNBestUCB != Double.NegativeInfinity)
 			{
 				// Prevent divide by zero assign too little values

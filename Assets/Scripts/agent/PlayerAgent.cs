@@ -38,15 +38,18 @@ namespace PAPIOnline
         private PlayerMetrics previousPlayerMetrics = new PlayerMetrics();
         private PlayerMetrics previousEnemyMetrics = new PlayerMetrics();
 
-        private volatile bool requestDecision = true;
+        private bool requestDecision = true;
+        private bool manualReward = true;
+        private bool isPaused = false;
         
         protected int[] skillMasks;
 
-        public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true)
+        public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true, bool manualReward = true)
         {
             // Initialize player
             this.player = new Player(name, playerProperties, skills);
             this.requestDecision = requestDecision;
+            this.manualReward = manualReward;
         }
 
         public virtual void Start()
@@ -70,10 +73,21 @@ namespace PAPIOnline
 
         public void FixedUpdate()
         {
-            // Update position
-            player.SetPosition(transform.position);
-            // Update timers
-            player.UpdatePlayer(Time.fixedDeltaTime);
+            if (!this.isPaused)
+            {
+                // Update timers
+                player.UpdatePlayer(Time.fixedDeltaTime);
+            }
+        }
+
+        public void PauseAgent()
+        {
+            this.isPaused = true;
+        }
+
+        public void ResumeAgent()
+        {
+            this.isPaused = false;
         }
 
         public override void OnEpisodeBegin()
@@ -281,7 +295,7 @@ namespace PAPIOnline
         public override void CollectDiscreteActionMasks(DiscreteActionMasker actionMasker)
         {
             // Set actions masks
-            actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(player));
+            actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(this, battleArena));
             skillMasks = Utils.GetSkillMasks(player, enemy);
             actionMasker.SetMask(SKILL_BRANCH_INDEX, skillMasks);
             actionMasker.SetMask(POTION_BRANCH_INDEX, Utils.GetPotionMasks(player));
@@ -312,15 +326,18 @@ namespace PAPIOnline
             }
             else
             {
-                // Reward for damaging the enemy (covers using skills, attacking and health debuffs)
-                AddReward(rewards.GetDamageReward(previousEnemyMetrics.properties, enemy.GetProperties()));
+                if (this.manualReward)
+                {
+                    // Reward for damaging the enemy (covers using skills, attacking and health debuffs)
+                    AddReward(rewards.GetDamageReward(previousEnemyMetrics.properties, enemy.GetProperties()));
 
-                // Reward for increasing player properties (covers using buffs and potions)
-                AddReward(rewards.GetPropertyReward(previousPlayerMetrics.properties, player.GetProperties()));
+                    // Reward for increasing player properties (covers using buffs and potions)
+                    AddReward(rewards.GetPropertyReward(previousPlayerMetrics.properties, player.GetProperties()));
 
-                // Reward for debuffing the enemy (covers using debuffs)
-                AddReward(rewards.GetDebuffReward(previousEnemyMetrics.debuffs, enemy.GetAppliedDebuffs()));
-
+                    // Reward for debuffing the enemy (covers using debuffs)
+                    AddReward(rewards.GetDebuffReward(previousEnemyMetrics.debuffs, enemy.GetAppliedDebuffs()));
+                }
+                
                 // Tiny negative reward every step
                 AddReward(rewards.GetStepReward());
             }
@@ -330,7 +347,6 @@ namespace PAPIOnline
         {
             Vector3 direction = Vector3.zero;
             Vector3 rotation = Vector3.zero;
-
             switch (action)
             {
                 case 1:
@@ -350,11 +366,12 @@ namespace PAPIOnline
             // Zero means no move
             if (action != 0)
             {
-                // Add force to agent rigid body instead of player.Move to make more relalistic movement
-                transform.Rotate(rotation, Time.fixedDeltaTime * 200f);
-                agentRB.AddForce(direction * 2f * player.GetSpeed(), ForceMode.VelocityChange);
-                // Update players position
-                player.SetPosition(transform.position);
+                // Rotate player
+                transform.Rotate(rotation, Time.fixedDeltaTime * 360f);
+                // Move player and update transform position, we manually moved the transform instead of adding force.
+                // Because we are pausing and resuming game. Physics engine should not be affected.
+                this.player.Move(direction);
+                this.transform.position = player.GetPosition();
             }
             if (action > 4)
             {

@@ -23,7 +23,8 @@ namespace PAPIOnline
 
 		private float oldTimeScale;
 
-		public WarriorMCTSAgent() : base("WarriorMCTS", false)
+		// MCTS Agent has own request decision mechanism and does not give manual rewards
+		public WarriorMCTSAgent() : base("WarriorMCTS", false, false)
 		{
 		}
 
@@ -46,13 +47,13 @@ namespace PAPIOnline
 			base.OnActionReceived(vectorAction);
 			
 			// Pause the game when MCTS runs
-			Time.timeScale = 0;
+			this.battleArena.PauseGame();
 
 			// Reward for MCTS result
 			float mctsReward = monteCarloManager.GetReward(mctsPlayer, mctsEnemy, vectorAction);
 
 			// Resume game after MCTS finishes
-			Time.timeScale = this.oldTimeScale;
+			this.battleArena.ResumeGame();
 
 			// add %50 of this value
 			AddReward(mctsReward / 2f);

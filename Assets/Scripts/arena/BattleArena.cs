@@ -32,6 +32,12 @@ namespace PAPIOnline
 		private BattleInfo blueBattleInfo;
 		private BattleInfo redBattleInfo;
 
+		[HideInInspector]
+		public Vector3 rightEdge;
+		public Vector3 leftEdge;
+		public Vector3 topEdge;
+		public Vector3 bottomEdge;
+
 		public void Awake()
 		{
 			SetComponents();
@@ -60,6 +66,15 @@ namespace PAPIOnline
 			}
 		}
 
+		private void SetEdges()
+		{
+			Vector3 arenaPos = this.transform.position;
+			this.rightEdge = new Vector3(arenaPos.x + BattleArena.WIDTH / 2 - 1, 0.5f, 0);
+			this.leftEdge = new Vector3(arenaPos.x - BattleArena.WIDTH / 2 + 1, 0.5f, 0);
+			this.topEdge = new Vector3(0, 0.5f, arenaPos.z + BattleArena.HEIGHT / 2 - 1);
+			this.bottomEdge = new Vector3(0, 0.5f, arenaPos.z - BattleArena.HEIGHT / 2 + 1);
+		}
+
 		public PlayerAgent GetRival(string playerTag)
 		{
 			return playerTag.Equals(BLUE_AGENT_TAG) ? redAgent : blueAgent;
@@ -73,6 +88,18 @@ namespace PAPIOnline
 		public Vector3 GetPosition()
 		{
 			return this.transform.position;
+		}
+
+		public void PauseGame()
+		{
+			this.redAgent.PauseAgent();
+			this.blueAgent.PauseAgent();
+		}
+
+		public void ResumeGame()
+		{
+			this.redAgent.ResumeAgent();
+			this.blueAgent.ResumeAgent();
 		}
 
 	}

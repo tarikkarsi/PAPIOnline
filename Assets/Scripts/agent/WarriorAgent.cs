@@ -18,8 +18,8 @@ namespace PAPIOnline
 	public class WarriorAgent : PlayerAgent
 	{
 
-		public WarriorAgent(string name, bool requestDecision = true)
-			: base(name, WarriorProperties.GetWarriorProps(), WarriorProperties.GetWarriorSkills(), requestDecision)
+		public WarriorAgent(string name, bool requestDecision = true, bool manualReward = true)
+			: base(name, WarriorProperties.GetWarriorProps(), WarriorProperties.GetWarriorSkills(), requestDecision, manualReward)
 		{
 		}
 

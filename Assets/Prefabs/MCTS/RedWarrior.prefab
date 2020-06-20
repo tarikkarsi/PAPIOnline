@@ -131,7 +131,6 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 50000
-  rewardType: 1
 --- !u!114 &3287781634572681596
 MonoBehaviour:
   m_ObjectHideFlags: 0
