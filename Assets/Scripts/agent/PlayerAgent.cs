@@ -171,10 +171,6 @@ namespace PAPIOnline
 
         public override void OnActionReceived(float[] vectorAction)
         {
-            //Debug.Log("Agent Move Action " + vectorAction[0]);
-            //Debug.Log("Agent Skill Action " + vectorAction[1]);
-            //Debug.Log("Agent Potion Action " + vectorAction[2]);
-
             // Save current player and enemy metrics before any action
             SaveCurrentMetrics();
 
@@ -383,13 +379,17 @@ namespace PAPIOnline
                 bool result = player.UseSkill(action - 1, enemy);
                 if (!result)
                 {
-                    UnityEngine.Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
+                    Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
                 }
             }
             // Skill count + 1, means normal attack
             else if (action == player.GetSkillCount() + 1)
             {
-                player.Attack(enemy);
+                bool result = player.Attack(enemy);
+                if (!result)
+                {
+                    Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
+                }
             }
         }
 
