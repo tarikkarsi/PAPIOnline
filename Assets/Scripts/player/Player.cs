@@ -278,8 +278,8 @@ namespace PAPIOnline
 			if (this.IsAvailable())
 			{
 				Vector3 dirToGo = direction * this.GetSpeed();
-				// Check collision of other object
-				if (!this.collisionManager.WillPlayerCollide(this, dirToGo)) {
+				// Check collision of other object if collision manager exists
+				if (this.collisionManager == null || !this.collisionManager.WillPlayerCollide(this, dirToGo)) {
 					this.properties.position += dirToGo;
 					return true;
 				}
