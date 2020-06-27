@@ -40,9 +40,7 @@ namespace PAPIOnline
 
         private bool requestDecision = true;
         private bool manualReward = true;
-        private bool isPaused = false;
-        
-        protected int[] skillMasks;
+        private volatile bool isPaused = false;
 
         public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true, bool manualReward = true)
         {
@@ -76,7 +74,7 @@ namespace PAPIOnline
             if (!this.isPaused)
             {
                 // Update timers
-                player.UpdatePlayer(Time.fixedDeltaTime);
+                this.player.UpdatePlayer(Time.fixedDeltaTime);
             }
         }
 
@@ -95,7 +93,7 @@ namespace PAPIOnline
             // Increase play count
             this.battleInfo.IncreasePlayCount();
 			// Set position relative to battle arena
-            Vector3 position = CompareTag(BattleArena.BLUE_AGENT_TAG) ? new Vector3(20f, 0f, 20f) : new Vector3(-20f, 0f, -20f);
+            Vector3 position = CompareTag(BattleArena.BLUE_AGENT_TAG) ? new Vector3(20f, 0.5f, 20f) : new Vector3(-20f, 0.5f, -20f);
             position += battleArena.GetPosition();
             this.transform.position = position;
 
@@ -295,9 +293,8 @@ namespace PAPIOnline
         public override void CollectDiscreteActionMasks(DiscreteActionMasker actionMasker)
         {
             // Set actions masks
-            actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(this, battleArena));
-            skillMasks = Utils.GetSkillMasks(player, enemy);
-            actionMasker.SetMask(SKILL_BRANCH_INDEX, skillMasks);
+            actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(player));
+            actionMasker.SetMask(SKILL_BRANCH_INDEX, Utils.GetSkillMasks(player, enemy));
             actionMasker.SetMask(POTION_BRANCH_INDEX, Utils.GetPotionMasks(player));
         }
 
@@ -366,16 +363,15 @@ namespace PAPIOnline
             // Zero means no move
             if (action != 0)
             {
-                // Rotate player
-                transform.Rotate(rotation, Time.fixedDeltaTime * 360f);
-                // Move player and update transform position, we manually moved the transform instead of adding force.
-                // Because we are pausing and resuming game. Physics engine should not be affected.
-                this.player.Move(direction);
-                this.transform.position = player.GetPosition();
-            }
-            if (action > 4)
-            {
-                UnityEngine.Debug.LogError(player.GetName() + " move action out of bound " + action);
+                // Rotate transform
+                transform.Rotate(rotation, Time.fixedDeltaTime * 200f);
+
+                if (direction != Vector3.zero)
+                {
+                    player.Move(direction);
+                    // Update transform position
+                    transform.position = player.GetPosition();
+                }
             }
         }
 
@@ -388,7 +384,6 @@ namespace PAPIOnline
                 bool result = player.UseSkill(action - 1, enemy);
                 if (!result)
                 {
-                    UnityEngine.Debug.LogError(player.GetName() + " skill masks " + string.Join(",", skillMasks));
                     UnityEngine.Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
                 }
             }
@@ -396,10 +391,6 @@ namespace PAPIOnline
             else if (action == player.GetSkillCount() + 1)
             {
                 player.Attack(enemy);
-            }
-            else if (action != 0)
-            {
-                UnityEngine.Debug.LogError(player.GetName() + " skill action out of bound " + action);
             }
         }
 
@@ -415,10 +406,6 @@ namespace PAPIOnline
             else if (action == 2)
             {
                 player.UseManaPotion();
-            }
-            else if (action != 0)
-            {
-                UnityEngine.Debug.LogError(player.GetName() + " potion action out of bound " + action);
             }
         }
 

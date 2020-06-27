@@ -25,9 +25,11 @@ namespace PAPIOnline
 		private GameHelper playerHelper;
 		private GameHelper enemyHelper;
 
+		private System.Random random = new System.Random();
+
 		public int RandomNumber(int min, int max)
 		{
-			return Random.Range(min, max);
+			return random.Next(min, max);
 		}
 
 		public Game(IPlayer player, IPlayer enemy, float fixedDeltaTime)

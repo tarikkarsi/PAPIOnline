@@ -14,6 +14,7 @@
  *******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace PAPIOnline
 {
@@ -26,21 +27,27 @@ namespace PAPIOnline
 		public int maxDepth = 400;
 		public int UCB1ExploreParam = 2;
 		private MonteCarlo mcts;
+		private Action<float> rewardCallback;
 
-		public MonteCarloManager(IPlayer player, IPlayer enemy)
+		public MonteCarloManager(IPlayer player, IPlayer enemy, Action<float> rewardCallback)
 		{
 			this.mcts = new MonteCarlo(new Game(player, enemy, fixedDeltaTime), maxSimulation, maxDepth, UCB1ExploreParam);
+			this.rewardCallback = rewardCallback;
 		}
 
-		public float GetReward(IPlayer player, IPlayer enemy, float[] vectorAction)
+		public void CalculateReward(IPlayer player, IPlayer enemy, float[] vectorAction)
 		{
 			// Reset the MCTS
 			this.mcts.Reset(player, enemy);
-			this.mcts.RunSearch();
-			return GiveMCTSActionReward(vectorAction);
+			//Thread t = new Thread(() => {
+				this.mcts.RunSearch();
+				float reward = CalculateMCTSActionReward(vectorAction);
+				this.rewardCallback(reward);
+			//});
+			//t.Start();
 		}
 
-		public float GiveMCTSActionReward(float[] vectorAction)
+		public float CalculateMCTSActionReward(float[] vectorAction)
 		{
 			float mctsReward = 0;
 			MonteCarloNode rootNode = mcts.GetRootNode();

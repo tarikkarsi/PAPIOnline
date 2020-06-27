@@ -12,6 +12,7 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using UnityEngine;
+using System.Threading;
 
 namespace PAPIOnline
 {
@@ -32,11 +33,9 @@ namespace PAPIOnline
 		private BattleInfo blueBattleInfo;
 		private BattleInfo redBattleInfo;
 
-		[HideInInspector]
-		public Vector3 rightEdge;
-		public Vector3 leftEdge;
-		public Vector3 topEdge;
-		public Vector3 bottomEdge;
+		// this is used for synchronizing two agents
+		private CountdownEvent synchronizer = new CountdownEvent(2);
+		private volatile bool synchronizerReset;
 
 		public void Awake()
 		{
@@ -64,15 +63,6 @@ namespace PAPIOnline
 						break;
 				}
 			}
-		}
-
-		private void SetEdges()
-		{
-			Vector3 arenaPos = this.transform.position;
-			this.rightEdge = new Vector3(arenaPos.x + BattleArena.WIDTH / 2 - 1, 0.5f, 0);
-			this.leftEdge = new Vector3(arenaPos.x - BattleArena.WIDTH / 2 + 1, 0.5f, 0);
-			this.topEdge = new Vector3(0, 0.5f, arenaPos.z + BattleArena.HEIGHT / 2 - 1);
-			this.bottomEdge = new Vector3(0, 0.5f, arenaPos.z - BattleArena.HEIGHT / 2 + 1);
 		}
 
 		public PlayerAgent GetRival(string playerTag)

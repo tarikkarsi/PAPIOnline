@@ -274,7 +274,20 @@ namespace PAPIOnline
 		{
 			if (this.IsAvailable())
 			{
-				this.properties.position += direction * this.GetSpeed();
+				Vector3 dirToGo = direction * this.GetSpeed();
+				Vector3 desiredPosition = this.properties.position + dirToGo;
+				Ray ray = new Ray(this.properties.position, dirToGo);
+				RaycastHit hit;
+				if (!Physics.Raycast(ray, out hit, dirToGo.magnitude))
+				{
+					this.properties.position = desiredPosition;
+				}
+				else
+				{
+					Vector3 hitPoint = hit.point - (direction / 10);
+					this.properties.position.x = hitPoint.x;
+					this.properties.position.y = hitPoint.y;
+				}
 			}
 			else
 			{

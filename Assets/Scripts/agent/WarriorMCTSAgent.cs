@@ -21,8 +21,6 @@ namespace PAPIOnline
 
 		private MonteCarloManager monteCarloManager;
 
-		private float oldTimeScale;
-
 		// MCTS Agent has own request decision mechanism and does not give manual rewards
 		public WarriorMCTSAgent() : base("WarriorMCTS", false, false)
 		{
@@ -32,8 +30,19 @@ namespace PAPIOnline
 		{
 			base.Start();
 			// Initialize monte carlo manager
-			this.monteCarloManager = new MonteCarloManager(player, enemy);
-			this.oldTimeScale = Time.timeScale;
+			this.monteCarloManager = new MonteCarloManager(player, enemy, OnRewardReceived);
+		}
+
+		public void OnRewardReceived(float mctsReward)
+		{
+			// Add %50 of this value
+			AddReward(mctsReward / 2f);
+
+			// Request new decision
+			RequestDecision();
+
+			// Resume the game after MCTS finishes
+			this.battleArena.ResumeGame();
 		}
 
 		public override void OnActionReceived(float[] vectorAction)
@@ -45,21 +54,12 @@ namespace PAPIOnline
 
 			// Continue ordinary action process 
 			base.OnActionReceived(vectorAction);
-			
+
 			// Pause the game when MCTS runs
 			this.battleArena.PauseGame();
 
 			// Reward for MCTS result
-			float mctsReward = monteCarloManager.GetReward(mctsPlayer, mctsEnemy, vectorAction);
-
-			// Resume game after MCTS finishes
-			this.battleArena.ResumeGame();
-
-			// add %50 of this value
-			AddReward(mctsReward / 2f);
-
-			// Request new decision
-			RequestDecision();
+			this.monteCarloManager.CalculateReward(mctsPlayer, mctsEnemy, vectorAction);
 		}
 
 	}

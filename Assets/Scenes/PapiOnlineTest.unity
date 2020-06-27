@@ -350,7 +350,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: 4e8b136e831b049ed8512331632870bc, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 716b6b33b38fdb04e8e9abd37eeeefdc, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 1
   m_BehaviorName: RedAgent
@@ -384,7 +384,7 @@ PrefabInstance:
     - target: {fileID: 1229681189261219308, guid: f7dd2d4dc9f110c4fa160b00ca948605,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1229681189261219308, guid: f7dd2d4dc9f110c4fa160b00ca948605,
         type: 3}
@@ -394,7 +394,7 @@ PrefabInstance:
     - target: {fileID: 1229681189261219308, guid: f7dd2d4dc9f110c4fa160b00ca948605,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1229681189261219308, guid: f7dd2d4dc9f110c4fa160b00ca948605,
         type: 3}
@@ -1948,7 +1948,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: 59202f8617787463fa0fcc075a4a0595, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 912d58538b555a341b2f31a1253cabad, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 1
   m_BehaviorName: BlueAgent
@@ -3268,7 +3268,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9041591637638381433}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 100, y: 0, z: 100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9041591638569288112}
