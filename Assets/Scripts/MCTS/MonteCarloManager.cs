@@ -7,6 +7,7 @@
  *					 rewards according to the result
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -39,12 +40,13 @@ namespace PAPIOnline
 		{
 			// Reset the MCTS
 			this.mcts.Reset(player, enemy);
-			//Thread t = new Thread(() => {
+			Thread t = new Thread(() => {
 				this.mcts.RunSearch();
 				float reward = CalculateMCTSActionReward(vectorAction);
 				this.rewardCallback(reward);
-			//});
-			//t.Start();
+			});
+			t.Priority = ThreadPriority.Highest;
+			t.Start();
 		}
 
 		public float CalculateMCTSActionReward(float[] vectorAction)

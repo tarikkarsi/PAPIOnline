@@ -14,6 +14,7 @@
  *					 the player is in during and after these battles.
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -34,11 +35,11 @@ namespace PAPIOnline
 
 		public static int MAX_MANA = 1000;
 
-		public static int MAX_SPEED = 3;
+		public static int MAX_SPEED = 30;
 
 		public static int MAX_DEFENSE = 25;
 
-		public static int MAX_DAMAGE = 30;
+		public static int MAX_DAMAGE = 20;
 
 		public static int MAX_MANA_POTION = 10;
 

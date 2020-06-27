@@ -6,6 +6,7 @@
  *   Description:    Helper class for calculating rewards
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

@@ -6,6 +6,7 @@
  *   Description:    Container class for saving required metrics for player
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

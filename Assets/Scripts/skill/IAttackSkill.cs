@@ -12,6 +12,7 @@
  *					 probability with the application of the attack skill.
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

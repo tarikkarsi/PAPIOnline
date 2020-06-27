@@ -6,6 +6,7 @@
  *   Description:    Buff skill implementation
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

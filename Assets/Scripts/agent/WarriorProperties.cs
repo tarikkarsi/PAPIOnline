@@ -6,6 +6,7 @@
  *   Description:    Warrior player properties
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -28,7 +29,7 @@ namespace PAPIOnline
 			.Mana(500)
 			.Defense(10)
 			.Damage(14)
-			.Speed(1)
+			.Speed(10)
 			.HealthPotionCount(10)
 			.ManaPotionCount(10)
 			.Build();
@@ -120,7 +121,7 @@ namespace PAPIOnline
 				60,             // timeout
 				BuffKind.SPEED, // buff kind
 				60,             // duration
-				0.5f            // amount
+				5f              // amount
 			)
 		};
 		}

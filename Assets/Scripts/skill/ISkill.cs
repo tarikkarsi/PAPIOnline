@@ -10,6 +10,7 @@
  *					 to be used. They cannot be used if there is not enough mana.
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

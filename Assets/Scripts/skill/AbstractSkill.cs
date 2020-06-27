@@ -6,6 +6,7 @@
  *   Description:    Abstract class for all skill implementations
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

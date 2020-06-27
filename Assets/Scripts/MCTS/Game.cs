@@ -6,13 +6,13 @@
  *   Description:    Game class which controls actions and states
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace PAPIOnline
 {

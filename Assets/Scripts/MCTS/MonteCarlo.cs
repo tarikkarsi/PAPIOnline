@@ -8,6 +8,7 @@
  *					 Handles best-move selection.
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -15,8 +16,6 @@
  *******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PAPIOnline
 {
@@ -28,7 +27,6 @@ namespace PAPIOnline
         private Dictionary<int, MonteCarloNode> nodes;
         private int maxSimulation;
         private int maxDepth;
-        private CountdownEvent countdown;
 
         public MonteCarlo(Game game, int maxSimulation, int maxDepth, int UCB1ExploreParam)
         {

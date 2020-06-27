@@ -6,6 +6,7 @@
  *   Description:    Agent with warrior properties and skills
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

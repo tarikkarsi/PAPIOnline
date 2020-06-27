@@ -6,6 +6,7 @@
  *   Description:    Player agent base class
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -16,7 +17,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
-using TMPro;
 
 namespace PAPIOnline
 {
@@ -31,8 +31,6 @@ namespace PAPIOnline
         protected IPlayer player;
         protected IPlayer enemy;
         private PlayerRewards rewards;
-
-        private Rigidbody agentRB;
         private BattleInfo battleInfo;
 
         private PlayerMetrics previousPlayerMetrics = new PlayerMetrics();
@@ -52,14 +50,13 @@ namespace PAPIOnline
 
         public virtual void Start()
         {
-            // Set name
-            this.player.SetName(tag);
-            // Get rigit body
-            this.agentRB = GetComponent<Rigidbody>();
-            // Initialize enemy
+            // Initialize arena, enemy and battle info
             this.battleArena = GetComponentInParent<BattleArena>();
             this.enemy = battleArena.GetRival(tag).GetPlayer();
             this.battleInfo = battleArena.GetBattleInfo(tag);
+            // Set name and collision manager of player
+            this.player.SetName(tag);
+            this.player.SetCollisionManager(battleArena.GetCollisionManager());
             // Initialize player rewards
             this.rewards = new PlayerRewards(this.player.GetName(), MaxStep);
         }
@@ -364,13 +361,15 @@ namespace PAPIOnline
             if (action != 0)
             {
                 // Rotate transform
-                transform.Rotate(rotation, Time.fixedDeltaTime * 200f);
+                transform.Rotate(rotation, 180.0f * Time.fixedDeltaTime);
 
                 if (direction != Vector3.zero)
                 {
-                    player.Move(direction);
-                    // Update transform position
-                    transform.position = player.GetPosition();
+                    // Update transform position when successfully moved
+                    if (player.Move(direction * Time.fixedDeltaTime))
+					{
+                        transform.position = player.GetPosition();
+                    }
                 }
             }
         }

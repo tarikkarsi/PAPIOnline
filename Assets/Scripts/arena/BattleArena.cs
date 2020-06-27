@@ -6,6 +6,7 @@
  *   Description:    Arena that contains players and reward texts
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -23,6 +24,7 @@ namespace PAPIOnline
 		public static int WIDTH = 50;
 		public static int HEIGHT = 50;
 		public static int MAX_DISTANCE = 70; // near hypotenus
+		public static float PLAYER_RADIUS = 0.7f;
 		public const string BLUE_AGENT_TAG = "blueAgent";
 		public const string BLUE_INFO_TAG = "blueInfo";
 		public const string RED_AGENT_TAG = "redAgent";
@@ -33,13 +35,12 @@ namespace PAPIOnline
 		private BattleInfo blueBattleInfo;
 		private BattleInfo redBattleInfo;
 
-		// this is used for synchronizing two agents
-		private CountdownEvent synchronizer = new CountdownEvent(2);
-		private volatile bool synchronizerReset;
+		private CollisionManager collisionManager;
 
 		public void Awake()
 		{
 			SetComponents();
+			SetCollisionManager();
 		}
 
 		private void SetComponents()
@@ -65,6 +66,16 @@ namespace PAPIOnline
 			}
 		}
 
+		private void SetCollisionManager()
+		{
+
+			float arenaHalfWidth = BattleArena.WIDTH / 2f;
+			float arenaHalfHeight = BattleArena.HEIGHT / 2f;
+			Vector2 wallExtentMin = new Vector2(this.transform.position.x - arenaHalfWidth, this.transform.position.z - arenaHalfHeight);
+			Vector2 wallExtentMax = new Vector2(this.transform.position.x + arenaHalfWidth, this.transform.position.z + arenaHalfHeight);
+			this.collisionManager = new CollisionManager(wallExtentMin, wallExtentMax, PLAYER_RADIUS);
+		}
+
 		public PlayerAgent GetRival(string playerTag)
 		{
 			return playerTag.Equals(BLUE_AGENT_TAG) ? redAgent : blueAgent;
@@ -73,6 +84,11 @@ namespace PAPIOnline
 		public BattleInfo GetBattleInfo(string playerTag)
 		{
 			return playerTag.Equals(BLUE_AGENT_TAG) ? blueBattleInfo : redBattleInfo;
+		}
+
+		public CollisionManager GetCollisionManager()
+		{
+			return this.collisionManager;
 		}
 
 		public Vector3 GetPosition()

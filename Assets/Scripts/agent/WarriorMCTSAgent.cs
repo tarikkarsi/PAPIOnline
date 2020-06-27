@@ -6,12 +6,12 @@
  *   Description:    Warrior agent base for monte carlo tree search
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
-using UnityEngine;
 
 namespace PAPIOnline
 {

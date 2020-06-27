@@ -6,6 +6,7 @@
  *   Description:    Shows the properties of the players affected by buff skills
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿/*******************************************************************************
+ *   Namespace:      PAPIOnline
+ *   
+ *   Class:          BattleInfo
+ *   
+ *   Description:    All information about battle stored here
+ *   
+ *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
+ *   
+ *   Revision History:
+ *   Name:           Date:        Description:
+ *   Tarik Karsi	 28.04.2020	  Initial Release
+ *******************************************************************************/
+using UnityEngine;
 using TMPro;
 
 namespace PAPIOnline

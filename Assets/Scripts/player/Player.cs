@@ -6,6 +6,7 @@
  *   Description:    Player implementation
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -35,6 +36,8 @@ namespace PAPIOnline
 		// Timers
 		protected float attackAnimationTimer;
 		protected float skillAnimationTimer;
+
+		protected CollisionManager collisionManager;
 
 		public Player(String name, PlayerProperties playerProperties, ISkill[] skills)
 		{
@@ -270,29 +273,22 @@ namespace PAPIOnline
 			this.properties.money += amount;
 		}
 
-		public void Move(Vector3 direction)
+		public bool Move(Vector3 direction)
 		{
 			if (this.IsAvailable())
 			{
 				Vector3 dirToGo = direction * this.GetSpeed();
-				Vector3 desiredPosition = this.properties.position + dirToGo;
-				Ray ray = new Ray(this.properties.position, dirToGo);
-				RaycastHit hit;
-				if (!Physics.Raycast(ray, out hit, dirToGo.magnitude))
-				{
-					this.properties.position = desiredPosition;
-				}
-				else
-				{
-					Vector3 hitPoint = hit.point - (direction / 10);
-					this.properties.position.x = hitPoint.x;
-					this.properties.position.y = hitPoint.y;
+				// Check collision of other object
+				if (!this.collisionManager.WillPlayerCollide(this, dirToGo)) {
+					this.properties.position += dirToGo;
+					return true;
 				}
 			}
 			else
 			{
 				Debug.LogError(GetName() + " is not available (Player::Move)");
 			}
+			return false;
 		}
 
 		public bool Attack(IPlayer target)
@@ -482,6 +478,11 @@ namespace PAPIOnline
 		public bool IsAvailable()
 		{
 			return !this.IsStunned() && !this.IsUsingSkill() && !this.IsAttacking() && !this.IsDead();
+		}
+
+		public void SetCollisionManager(CollisionManager collisionManager)
+		{
+			this.collisionManager = collisionManager.RegisterPlayer(this);
 		}
 
 		public IPlayer ClonePlayer()

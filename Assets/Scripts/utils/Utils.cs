@@ -6,6 +6,7 @@
  *   Description:    Utility class for some calculations
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:

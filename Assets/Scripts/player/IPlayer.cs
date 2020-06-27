@@ -13,6 +13,7 @@
  *					 experience and level up.
  *   
  *   Author:         Tarik Karsi
+ *   Email:          tarikkarsi@hotmail.com
  *   
  *   Revision History:
  *   Name:           Date:        Description:
@@ -107,8 +108,8 @@ namespace PAPIOnline
 		// Getter for player's attack animation
 		bool IsAttacking();
 
-		// Moves player to given direction
-		void Move(Vector3 direction);
+		// Moves player to given direction, returns false if collided
+		bool Move(Vector3 direction);
 
 		// Getter for applied buffs on the player
 		IList<IBuffSkill> GetAppliedBuffs();
@@ -193,6 +194,9 @@ namespace PAPIOnline
 
 		// Updates player's timers, skills and position
 		void UpdatePlayer(float elapsedTime);
+
+		// Used for collision detection in movement
+		void SetCollisionManager(CollisionManager collisionManager);
 
 	}
 
