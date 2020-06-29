@@ -20,19 +20,19 @@ namespace PAPIOnline
 
     public class BattleInfo : MonoBehaviour
     {
-        public TextMeshProUGUI playCountText;
-        public TextMeshProUGUI winCountText;
-        public TextMeshProUGUI rewardText;
-        public TextMeshProUGUI healthText;
-        public TextMeshProUGUI manaText;
-        public TextMeshProUGUI healthPotText;
-        public TextMeshProUGUI manaPotText;
-        public TextMeshProUGUI speedText;
-        public TextMeshProUGUI defenseText;
-        public TextMeshProUGUI damageText;
-        public TextMeshProUGUI attackRangeText;
-        public TextMeshProUGUI canAttack;
-        public TextMeshProUGUI distance;
+        public TextMeshPro playCountText;
+        public TextMeshPro winCountText;
+        public TextMeshPro rewardText;
+        public TextMeshPro healthText;
+        public TextMeshPro manaText;
+        public TextMeshPro healthPotText;
+        public TextMeshPro manaPotText;
+        public TextMeshPro speedText;
+        public TextMeshPro defenseText;
+        public TextMeshPro damageText;
+        public TextMeshPro attackRangeText;
+        public TextMeshPro canAttack;
+        public TextMeshPro distance;
 
         private int playCount = 0;
         private int winCount = 0;

@@ -133,6 +133,7 @@ namespace PAPIOnline
 			{
 				Vector3 enemyDirection = Utils.GetDirection(player, enemy);
 				float speed = Utils.GetDistance(player, enemy) / 2;
+				speed /= player.GetSpeed();
 				// Multiply direction to move immediately
 				player.Move(enemyDirection * speed);
 			}

@@ -58,13 +58,15 @@ namespace PAPIOnline
 
 		public void ResetPlayer()
 		{
-			properties = backupProperties.Clone();
-			appliedBuffs.Clear();
-			appliedDebuffs.Clear();
-			foreach (ISkill skill in skills)
+			this.properties = this.backupProperties.Clone();
+			this.appliedBuffs.Clear();
+			this.appliedDebuffs.Clear();
+			foreach (ISkill skill in this.skills)
 			{
 				skill.ResetSkill();
 			}
+			this.attackAnimationTimer = 0;
+			this.skillAnimationTimer = 0;
 		}
 
 		public string GetName()
@@ -303,7 +305,7 @@ namespace PAPIOnline
 			}
 			else
 			{
-				if (this.IsAvailable())
+				if (!this.IsAvailable())
 				{
 					Debug.LogError(GetName() + " is not available (Player::Attack)");
 				}

@@ -89,11 +89,8 @@ namespace PAPIOnline
         {
             // Increase play count
             this.battleInfo.IncreasePlayCount();
-			// Set position relative to battle arena
-            Vector3 position = CompareTag(BattleArena.BLUE_AGENT_TAG) ? new Vector3(20f, 0.5f, 20f) : new Vector3(-20f, 0.5f, -20f);
-            position += battleArena.GetPosition();
-            this.transform.position = position;
-
+			// Set position
+            this.transform.position = this.battleArena.GetNextAgentPosition();
             // Reset wrapped player
             this.player.ResetPlayer();
             this.player.SetPosition(transform.position);

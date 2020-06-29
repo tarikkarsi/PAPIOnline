@@ -13,7 +13,7 @@
  *   Tarik Karsi	 28.04.2020	  Initial Release
  *******************************************************************************/
 using UnityEngine;
-using System.Threading;
+using System.Collections.Generic;
 
 namespace PAPIOnline
 {
@@ -22,9 +22,13 @@ namespace PAPIOnline
 	{
 		[HideInInspector]
 		public static int WIDTH = 50;
+		public static int HALF_WIDTH = WIDTH / 2;
 		public static int HEIGHT = 50;
+		public static int HALF_HEIGHT = HEIGHT / 2;
 		public static int MAX_DISTANCE = 70; // near hypotenus
-		public static float PLAYER_RADIUS = 0.7f;
+
+		public static float AGENT_Y = 0.5f;
+		public static float AGENT_RADIUS = 0.7f;
 		public const string BLUE_AGENT_TAG = "blueAgent";
 		public const string BLUE_INFO_TAG = "blueInfo";
 		public const string RED_AGENT_TAG = "redAgent";
@@ -37,10 +41,14 @@ namespace PAPIOnline
 
 		private CollisionManager collisionManager;
 
+		private Stack<Vector3> agentPositions = new Stack<Vector3>(2);
+		
+
 		public void Awake()
 		{
 			SetComponents();
 			SetCollisionManager();
+			SetAgentPositions();
 		}
 
 		private void SetComponents()
@@ -68,22 +76,43 @@ namespace PAPIOnline
 
 		private void SetCollisionManager()
 		{
-
-			float arenaHalfWidth = BattleArena.WIDTH / 2f;
-			float arenaHalfHeight = BattleArena.HEIGHT / 2f;
-			Vector2 wallExtentMin = new Vector2(this.transform.position.x - arenaHalfWidth, this.transform.position.z - arenaHalfHeight);
-			Vector2 wallExtentMax = new Vector2(this.transform.position.x + arenaHalfWidth, this.transform.position.z + arenaHalfHeight);
-			this.collisionManager = new CollisionManager(wallExtentMin, wallExtentMax, PLAYER_RADIUS);
+			Vector2 wallExtentMin = new Vector2(this.transform.position.x - HALF_WIDTH, this.transform.position.z - HALF_HEIGHT);
+			Vector2 wallExtentMax = new Vector2(this.transform.position.x + HALF_WIDTH, this.transform.position.z + HALF_HEIGHT);
+			this.collisionManager = new CollisionManager(wallExtentMin, wallExtentMax, AGENT_RADIUS);
 		}
 
-		public PlayerAgent GetRival(string playerTag)
+		private void SetAgentPositions()
 		{
-			return playerTag.Equals(BLUE_AGENT_TAG) ? redAgent : blueAgent;
+			// Set positions of two agents
+			// Select a random corner
+			int cornerX = Random.Range(0, 2) == 0 ? 1 : -1;
+			int cornerY = Random.Range(0, 2) == 0 ? 1 : -1;
+			Vector3 agent1Pos = new Vector3(cornerX * (HALF_WIDTH - 5), AGENT_Y, cornerY * (HALF_HEIGHT - 5));
+			// Position agents opposite corners
+			Vector3 agent2Pos = new Vector3(-agent1Pos.x, AGENT_Y, -agent1Pos.z);
+			// Align positions with arena position
+			this.agentPositions.Push(agent1Pos + this.transform.position);
+			this.agentPositions.Push(agent2Pos + this.transform.position);
 		}
 
-		public BattleInfo GetBattleInfo(string playerTag)
+		public Vector3 GetNextAgentPosition()
 		{
-			return playerTag.Equals(BLUE_AGENT_TAG) ? blueBattleInfo : redBattleInfo;
+			// Add new positions if empty
+			if (this.agentPositions.Count == 0)
+			{
+				this.SetAgentPositions();
+			}
+			return this.agentPositions.Pop();
+		}
+
+		public PlayerAgent GetRival(string agentTag)
+		{
+			return agentTag.Equals(BLUE_AGENT_TAG) ? redAgent : blueAgent;
+		}
+
+		public BattleInfo GetBattleInfo(string agentTag)
+		{
+			return agentTag.Equals(BLUE_AGENT_TAG) ? blueBattleInfo : redBattleInfo;
 		}
 
 		public CollisionManager GetCollisionManager()
