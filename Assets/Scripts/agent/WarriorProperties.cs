@@ -25,7 +25,7 @@ namespace PAPIOnline
 			.HealthCapacity(500)
 			.Health(500)
 			.ManaCapacity(500)
-			.AttackRange(3)
+			.AttackRange(4)
 			.Mana(500)
 			.Defense(10)
 			.Damage(14)

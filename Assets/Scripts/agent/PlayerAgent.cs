@@ -91,6 +91,7 @@ namespace PAPIOnline
             this.battleInfo.IncreasePlayCount();
 			// Set position
             this.transform.position = this.battleArena.GetNextAgentPosition();
+            this.transform.rotation = Quaternion.LookRotation(this.battleArena.transform.position - this.transform.position);
             // Reset wrapped player
             this.player.ResetPlayer();
             this.player.SetPosition(transform.position);

@@ -40,13 +40,13 @@ namespace PAPIOnline
 		{
 			// Reset the MCTS
 			this.mcts.Reset(player, enemy);
-			//Thread t = new Thread(() => {
+			Thread t = new Thread(() => {
 				this.mcts.RunSearch();
 				float reward = CalculateMCTSActionReward(vectorAction);
 				this.rewardCallback(reward);
-			//});
+			});
 			//t.Priority = ThreadPriority.Highest;
-			//t.Start();
+			t.Start();
 		}
 
 		public float CalculateMCTSActionReward(float[] vectorAction)
