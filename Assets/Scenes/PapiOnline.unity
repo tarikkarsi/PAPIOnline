@@ -1217,6 +1217,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BattleArena (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 3921369584364507063, guid: 50925d1aa0144458f8beb21b209b3faa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3921369584417288681, guid: 50925d1aa0144458f8beb21b209b3faa,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -1940,6 +1945,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BattleArena (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 3921369584364507063, guid: 50925d1aa0144458f8beb21b209b3faa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3921369584417288681, guid: 50925d1aa0144458f8beb21b209b3faa,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -2588,6 +2598,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BattleArena (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3921369584364507063, guid: 50925d1aa0144458f8beb21b209b3faa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3921369584417288681, guid: 50925d1aa0144458f8beb21b209b3faa,
         type: 3}
@@ -4535,6 +4550,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BattleArena (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3921369584364507063, guid: 50925d1aa0144458f8beb21b209b3faa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3921369584417288681, guid: 50925d1aa0144458f8beb21b209b3faa,
         type: 3}

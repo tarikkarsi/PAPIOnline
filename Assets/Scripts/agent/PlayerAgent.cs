@@ -38,7 +38,11 @@ namespace PAPIOnline
 
         private bool requestDecision = true;
         private bool manualReward = true;
-        private volatile bool isPaused = false;
+        protected volatile bool makeRequest = false;
+
+        private int[] moveMasks;
+        private int[] skillMasks;
+        private int[] potionMasks;
 
         public PlayerAgent(String name, PlayerProperties playerProperties, ISkill[] skills, bool requestDecision = true, bool manualReward = true)
         {
@@ -68,25 +72,20 @@ namespace PAPIOnline
 
         public void FixedUpdate()
         {
-            if (!this.isPaused)
+            // Update timers
+            this.player.UpdatePlayer(Time.fixedDeltaTime);
+            if (this.makeRequest)
             {
-                // Update timers
-                this.player.UpdatePlayer(Time.fixedDeltaTime);
+                //UnityEngine.Debug.Log(player.GetName() + " requested decision");
+                RequestDecision();
+                this.makeRequest = false;
             }
-        }
-
-        public void PauseAgent()
-        {
-            this.isPaused = true;
-        }
-
-        public void ResumeAgent()
-        {
-            this.isPaused = false;
         }
 
         public override void OnEpisodeBegin()
         {
+            // Reset melee attack and skill counts
+            this.battleInfo.ResetAttackAndSkillCounts();
             // Increase play count
             this.battleInfo.IncreasePlayCount();
 			// Set position
@@ -96,6 +95,7 @@ namespace PAPIOnline
             this.player.ResetPlayer();
             this.player.SetPosition(transform.position);
 			// Request the first decision at the beggining of the episode
+            UnityEngine.Debug.Log(player.GetName() + " requested decision");
             RequestDecision();
         }
 
@@ -187,12 +187,13 @@ namespace PAPIOnline
             // Request decision after each action
             if (requestDecision)
             {
-                RequestDecision();
+                this.makeRequest = true;
             }
         }
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            //UnityEngine.Debug.Log(player.GetName() + "collectObservations");
             // NORMALIZE ALL OBSERVATIONS, BECAUSE TENSORFLOW CANNOT NORMALIZE PROPERLY!!!
             // Player Properties
             // Position information
@@ -284,9 +285,13 @@ namespace PAPIOnline
         public override void CollectDiscreteActionMasks(DiscreteActionMasker actionMasker)
         {
             // Set actions masks
-            actionMasker.SetMask(MOVE_BRANCH_INDEX, Utils.GetMoveMasks(player));
-            actionMasker.SetMask(SKILL_BRANCH_INDEX, Utils.GetSkillMasks(player, enemy));
-            actionMasker.SetMask(POTION_BRANCH_INDEX, Utils.GetPotionMasks(player));
+            this.moveMasks = Utils.GetMoveMasks(player);
+            actionMasker.SetMask(MOVE_BRANCH_INDEX, this.moveMasks);
+            this.skillMasks = Utils.GetSkillMasks(player, enemy);
+            //UnityEngine.Debug.Log(player.GetName() + " CollectDiscreteActionMasks: " + String.Join(",", this.skillMasks));
+            actionMasker.SetMask(SKILL_BRANCH_INDEX, this.skillMasks);
+            this.potionMasks = Utils.GetPotionMasks(player);
+            actionMasker.SetMask(POTION_BRANCH_INDEX, this.potionMasks);
         }
 
         private void SaveCurrentMetrics()
@@ -377,7 +382,11 @@ namespace PAPIOnline
                 bool result = player.UseSkill(action - 1, enemy);
                 if (!result)
                 {
-                    Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
+                    Debug.LogError(player.GetName() + " IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsUsingSkill: " + player.IsUsingSkill() + " IsDead: " + player.IsDead() + " SkillMasks: " + String.Join(",", this.skillMasks));
+                }
+                else {
+                    this.battleInfo.IncreaseSkillCount(action);
+                    UnityEngine.Debug.Log(player.GetName() + "used skill " + (action - 1));
                 }
             }
             // Skill count + 1, means normal attack
@@ -386,7 +395,12 @@ namespace PAPIOnline
                 bool result = player.Attack(enemy);
                 if (!result)
                 {
-                    Debug.LogError("IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsAnimating: " + player.IsUsingSkill() + " IsDead: " + player.IsDead());
+                    Debug.LogError(player.GetName() + " IsStunned: " + player.IsStunned() + " IsAttacking: " + player.IsAttacking() + " IsUsingSkill: " + player.IsUsingSkill() + " IsDead: " + player.IsDead() + " SkillMasks: " + String.Join(",", this.skillMasks));
+                }
+                else
+                {
+                    this.battleInfo.IncreaseMeleeAttackCount();
+                    UnityEngine.Debug.Log(player.GetName() + "used melee attack");
                 }
             }
         }
@@ -397,12 +411,27 @@ namespace PAPIOnline
             // 1 means use health potion
             if (action == 1)
             {
-                player.UseHealthPotion();
+                bool result = player.UseHealthPotion();
+                if (!result)
+                {
+                    Debug.LogError(player.GetName() + " PotionMasks: " + String.Join(",", this.potionMasks));
+                }
             }
             // 2 means use mana potion
             else if (action == 2)
             {
-                player.UseManaPotion();
+                bool result = player.UseManaPotion();
+                if (!result)
+                {
+                    Debug.LogError(player.GetName() + " PotionMasks: " + String.Join(",", this.potionMasks));
+                }
+                else
+                {
+                    if (player.GetName().Equals(BattleArena.BLUE_AGENT_TAG))
+                    {
+                        // Debug.LogError(player.GetName() + " used mana potion current mana: " + player.GetMana());
+                    }
+                }
             }
         }
 

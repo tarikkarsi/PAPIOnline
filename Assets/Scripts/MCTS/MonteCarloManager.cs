@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 namespace PAPIOnline
 {
@@ -24,14 +25,17 @@ namespace PAPIOnline
 	{
 		public float fixedDeltaTime = 0.4f;
 		public float searchTimeout = 0.15f;
-		public int maxSimulation = 30;
-		public int maxDepth = 400;
+		public int maxSimulation = 50;
+		public int maxDepth = 50;
 		public int UCB1ExploreParam = 2;
 		private MonteCarlo mcts;
 		private Action<float> rewardCallback;
 
+		private string name;
+
 		public MonteCarloManager(IPlayer player, IPlayer enemy, Action<float> rewardCallback)
 		{
+			this.name = player.GetName();
 			this.mcts = new MonteCarlo(new Game(player, enemy, fixedDeltaTime), maxSimulation, maxDepth, UCB1ExploreParam);
 			this.rewardCallback = rewardCallback;
 		}
@@ -53,7 +57,7 @@ namespace PAPIOnline
 		{
 			float mctsReward = 0;
 			MonteCarloNode rootNode = mcts.GetRootNode();
-			List<int> mctsActions = rootNode.AllActions();
+			List<int> mctsActions = mcts.GetActionsWithoutMove(rootNode);
 			ISet<int> annActions = mcts.ConvertMCTSActions(vectorAction);
 
 			double MCTSBestUCB = Double.NegativeInfinity;
@@ -89,6 +93,14 @@ namespace PAPIOnline
 			// Move actions eliminated here
 			if (ANNBestUCB != Double.NegativeInfinity)
 			{
+				if (ANNBestUCB == MCTSBestUCB) 
+				{
+					mctsReward = 1;
+				}
+				else{
+					mctsReward = -1;
+				}
+				/*
 				// Prevent divide by zero assign too little values
 				UCBMin = UCBMin == MCTSBestUCB ? 0 : UCBMin;
 				MCTSBestUCB = MCTSBestUCB == 0 ? 000000000.1d : MCTSBestUCB;
@@ -97,9 +109,19 @@ namespace PAPIOnline
 				double normalizedANNRate = (ANNBestUCB - UCBMin) / (MCTSBestUCB - UCBMin);
 				double differenceFromMax = 1 - normalizedANNRate;
 				double diffSquare = Math.Pow(differenceFromMax, 2);
-				mctsReward = (float)(1.3d * Math.Exp(-5.84d * diffSquare) - 0.3d);
+				mctsReward = (float)(1.3d * Math.Exp(-5.84d * diffSquare) - 0.01d);
+				*/
 			}
-
+			else if (mctsActions.Count > 0)
+			{
+				// Give negative reward for non move actions that mcts does not recommend
+				mctsReward = -1f;
+			}
+			if (name.Equals(BattleArena.RED_AGENT_TAG) && mctsReward != 0)
+			{
+				Debug.Log(name + " " + mctsReward + " reward given: vectorActions=" + vectorAction[0] + "," + vectorAction[1] + "," + vectorAction[2] +
+					" convertedActions=" + String.Join(",", annActions) + " mctsActions=" + String.Join(",", mctsActions));
+			}
 			return mctsReward;
 		}
 

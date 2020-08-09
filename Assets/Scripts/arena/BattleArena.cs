@@ -125,18 +125,6 @@ namespace PAPIOnline
 			return this.transform.position;
 		}
 
-		public void PauseGame()
-		{
-			this.redAgent.PauseAgent();
-			this.blueAgent.PauseAgent();
-		}
-
-		public void ResumeGame()
-		{
-			this.redAgent.ResumeAgent();
-			this.blueAgent.ResumeAgent();
-		}
-
 	}
 
 }

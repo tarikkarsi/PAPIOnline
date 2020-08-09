@@ -185,12 +185,12 @@ MonoBehaviour:
   manaText: {fileID: 966532323}
   healthPotText: {fileID: 1878733973}
   manaPotText: {fileID: 1411672607}
-  speedText: {fileID: 2104917653}
-  defenseText: {fileID: 1091171217}
-  damageText: {fileID: 1918452780}
-  attackRangeText: {fileID: 1781523372}
-  canAttack: {fileID: 344221786}
-  distance: {fileID: 606400556}
+  meleeAttack: {fileID: 2104917653}
+  skill1: {fileID: 1091171217}
+  skill2: {fileID: 1918452780}
+  skill3: {fileID: 1781523372}
+  skill4: {fileID: 344221786}
+  skill5: {fileID: 606400556}
 --- !u!1 &96802482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,7 +1029,7 @@ GameObject:
   - component: {fileID: 344221787}
   - component: {fileID: 344221786}
   m_Layer: 0
-  m_Name: CanAttack
+  m_Name: Skill4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1439,7 +1439,7 @@ GameObject:
   - component: {fileID: 606400557}
   - component: {fileID: 606400556}
   m_Layer: 0
-  m_Name: Distance
+  m_Name: Skill5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1849,7 +1849,7 @@ GameObject:
   - component: {fileID: 947421470}
   - component: {fileID: 947421469}
   m_Layer: 0
-  m_Name: Defense
+  m_Name: Skill1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2259,7 +2259,7 @@ GameObject:
   - component: {fileID: 1080576740}
   - component: {fileID: 1080576739}
   m_Layer: 0
-  m_Name: Distance
+  m_Name: Skill5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2464,7 +2464,7 @@ GameObject:
   - component: {fileID: 1091171218}
   - component: {fileID: 1091171217}
   m_Layer: 0
-  m_Name: Defense
+  m_Name: Skill1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3360,7 +3360,7 @@ GameObject:
   - component: {fileID: 1362034338}
   - component: {fileID: 1362034337}
   m_Layer: 0
-  m_Name: Damage
+  m_Name: Skill2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3820,12 +3820,12 @@ MonoBehaviour:
   manaText: {fileID: 1253624617}
   healthPotText: {fileID: 1460198297}
   manaPotText: {fileID: 395901833}
-  speedText: {fileID: 1854450944}
-  defenseText: {fileID: 947421469}
-  damageText: {fileID: 1362034337}
-  attackRangeText: {fileID: 1837668217}
-  canAttack: {fileID: 1928136652}
-  distance: {fileID: 1080576739}
+  meleeAttack: {fileID: 1854450944}
+  skill1: {fileID: 947421469}
+  skill2: {fileID: 1362034337}
+  skill3: {fileID: 1837668217}
+  skill4: {fileID: 1928136652}
+  skill5: {fileID: 1080576739}
 --- !u!1 &1460198295
 GameObject:
   m_ObjectHideFlags: 0
@@ -4252,7 +4252,7 @@ GameObject:
   - component: {fileID: 1781523373}
   - component: {fileID: 1781523372}
   m_Layer: 0
-  m_Name: AttackRange
+  m_Name: Skill3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4457,7 +4457,7 @@ GameObject:
   - component: {fileID: 1837668218}
   - component: {fileID: 1837668217}
   m_Layer: 0
-  m_Name: AttackRange
+  m_Name: Skill3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4662,7 +4662,7 @@ GameObject:
   - component: {fileID: 1854450945}
   - component: {fileID: 1854450944}
   m_Layer: 0
-  m_Name: Speed
+  m_Name: MeleeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5072,7 +5072,7 @@ GameObject:
   - component: {fileID: 1918452781}
   - component: {fileID: 1918452780}
   m_Layer: 0
-  m_Name: Damage
+  m_Name: Skill2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5277,7 +5277,7 @@ GameObject:
   - component: {fileID: 1928136653}
   - component: {fileID: 1928136652}
   m_Layer: 0
-  m_Name: CanAttack
+  m_Name: Skill4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5526,7 +5526,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Blue Agent
+  m_text: Red Agent
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5595,7 +5595,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 2093835635}
-    characterCount: 10
+    characterCount: 9
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -5892,7 +5892,7 @@ GameObject:
   - component: {fileID: 2104917654}
   - component: {fileID: 2104917653}
   m_Layer: 0
-  m_Name: Speed
+  m_Name: MeleeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6193,7 +6193,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: 83de9f5805fbc0547b709cfb48265459, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: f5c5a2fd43d6c66449dc8a1fdb8b2313, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: RedAgent
@@ -7217,7 +7217,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: 59b866bb4a739464fa0b18f7851d97c4, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: c18def37b2d6c4d49b8264cf4416fbb2, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: BlueAgent

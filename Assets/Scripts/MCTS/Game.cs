@@ -173,7 +173,7 @@ namespace PAPIOnline
 			// Convert skill actions
 			if (vectorAction[PlayerAgent.SKILL_BRANCH_INDEX] != 0)
 			{
-				correspondingActions.Add((int)vectorAction[PlayerAgent.SKILL_BRANCH_INDEX] - 1);
+				correspondingActions.Add(playerHelper.SKILL_START_INDEX + (int)vectorAction[PlayerAgent.SKILL_BRANCH_INDEX] - 1);
 			}
 			// Convert potion actions
 			if (vectorAction[PlayerAgent.POTION_BRANCH_INDEX] != 0)
@@ -182,6 +182,42 @@ namespace PAPIOnline
 			}
 			return correspondingActions;
 		}
+
+		public List<int> GetActionsWithoutMove(MonteCarloNode node)
+		{
+			List<int> allActions = new List<int>();
+            
+			foreach (MonteCarloNode child in node.children.Values)
+			{
+				// eliminate unvisited actions and move action
+				if (child != null && child.action != playerHelper.MOVE_INDEX)
+				{
+					allActions.Add(child.action);
+				}
+			}
+
+			return allActions;
+		}
+
+		public bool ActionsHasOnlyMove(List<int> actions)
+		{
+			bool result = true;
+			foreach (int action in actions)
+			{
+				if (action != playerHelper.MOVE_INDEX)
+				{
+					result = false;
+					break;
+				}
+			}
+			return result;
+		}
+
+		public bool ActionsHasPotion(ISet<int> actions)
+		{
+			return actions.Contains(playerHelper.HEALTH_POTION_INDEX) || actions.Contains(playerHelper.MANA_POTION_INDEX);
+		}
+
 	}
 
 }

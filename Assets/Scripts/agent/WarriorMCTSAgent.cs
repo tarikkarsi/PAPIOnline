@@ -36,13 +36,10 @@ namespace PAPIOnline
 		public void OnRewardReceived(float mctsReward)
 		{
 			// Add %50 of this value
-			AddReward(mctsReward / 2f);
+			AddReward(mctsReward / 20f);
 
 			// Request new decision
-			RequestDecision();
-
-			// Resume the game after MCTS finishes
-			this.battleArena.ResumeGame();
+			this.makeRequest = true;
 		}
 
 		public override void OnActionReceived(float[] vectorAction)
@@ -54,9 +51,6 @@ namespace PAPIOnline
 
 			// Continue ordinary action process 
 			base.OnActionReceived(vectorAction);
-
-			// Pause the game when MCTS runs
-			this.battleArena.PauseGame();
 
 			// Reward for MCTS result
 			this.monteCarloManager.CalculateReward(mctsPlayer, mctsEnemy, vectorAction);

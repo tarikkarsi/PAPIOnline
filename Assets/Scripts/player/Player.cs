@@ -279,6 +279,8 @@ namespace PAPIOnline
 		{
 			if (this.IsAvailable())
 			{
+				// Do not allow changing y direction
+				direction.y = 0;
 				Vector3 dirToGo = direction * this.GetSpeed();
 				// Check collision of other object if collision manager exists
 				if (this.collisionManager == null || !this.collisionManager.WillPlayerCollide(this, dirToGo)) {
@@ -369,11 +371,11 @@ namespace PAPIOnline
 			{
 				if (this.properties.manaPotionCount == 0)
 				{
-					Debug.LogError(GetName() + " has not enough mana potion (Player::UseManaPotion)");
+					Debug.LogError(GetName() + " has not enough mana potion (Player::UseManaPotion) manaPotionCount: " + this.properties.manaPotionCount);
 				}
 				else
 				{
-					Debug.LogError(GetName() + " mana already full (Player::UseManaPotion)");
+					Debug.LogError(GetName() + " mana already full (Player::UseManaPotion) mana: " + this.properties.mana);
 				}
 			}
 			return false;
@@ -383,7 +385,7 @@ namespace PAPIOnline
 		{
 			// Use skill on target enemy
 			ISkill skill = this.skills[skillIndex];
-			// Check for availability and mana
+			// Check for availability
 			if (this.IsAvailable())
 			{
 				bool success = this.skills[skillIndex].Use(this, target);
@@ -400,7 +402,7 @@ namespace PAPIOnline
 			}
 			else
 			{
-				Debug.LogError(GetName() + " is not available to use skill with index: " + skillIndex + " (Player::UseSkill)");
+				Debug.LogError(GetName() + " is not available to use skill with index: " + skillIndex + " (Player::UseSkill) SkillAnimationTimer: " + this.skillAnimationTimer);
 			}
 			return false;
 		}
@@ -469,12 +471,12 @@ namespace PAPIOnline
 
 		public bool IsAttacking()
 		{
-			return this.attackAnimationTimer > 0;
+			return this.attackAnimationTimer > 0.0f;
 		}
 
 		public bool IsUsingSkill()
 		{
-			return this.skillAnimationTimer > 0;
+			return this.skillAnimationTimer > 0.0f;
 		}
 
 		public bool IsAvailable()

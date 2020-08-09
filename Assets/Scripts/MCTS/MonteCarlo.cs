@@ -82,6 +82,10 @@ namespace PAPIOnline
 		 */
         public MonteCarloNode Select(GameState state)
         {
+            if (!this.nodes.ContainsKey(state.GetId()))
+            {
+                UnityEngine.Debug.LogError("Key not found in the map: " + String.Join(",", this.nodes.Keys) + ", key = " + state.GetId());
+            }
             MonteCarloNode node = this.nodes[state.GetId()];
 
             while (node.IsFullyExpanded() && !node.IsLeaf())
@@ -171,10 +175,21 @@ namespace PAPIOnline
 
         // Utility methods
 
+        /*
+		 * Get root node.
+		 */
         public MonteCarloNode GetRootNode()
         {
-             return this.nodes[game.GetInitialState().GetId()];
+            return this.nodes[game.GetInitialState().GetId()];
         }
+
+        /*
+		 * Get all legal actions except move action from root node.
+		 */
+		public List<int> GetActionsWithoutMove(MonteCarloNode node)
+		{
+            return this.game.GetActionsWithoutMove(node);
+		}
 
         public ISet<int> ConvertMCTSActions(float[] vectorAction)
         {
@@ -205,6 +220,16 @@ namespace PAPIOnline
             float enemyTotalMana = enemyLastState.GetMana() + enemyLastState.GetManaPotionCount() * PlayerProperties.MANA_POTION_FILL;
             return playerTotalHealth + playerTotalMana >= enemyTotalHealth + enemyTotalMana ? PlayerKind.PLAYER : PlayerKind.ENEMY;
         }
+
+        public bool ActionsHasOnlyMove(System.Collections.Generic.List<int> actions)
+		{
+			return game.ActionsHasOnlyMove(actions);
+		}
+
+        public bool ActionsHasPotion(System.Collections.Generic.ISet<int> actions)
+		{
+			return game.ActionsHasPotion(actions);
+		}
 
     }
 

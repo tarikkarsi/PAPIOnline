@@ -20,6 +20,7 @@ namespace PAPIOnline
 
 	public class GameHelper
 	{
+		public int SKILL_START_INDEX;
 		public int ATTACK_INDEX;
 		public int MOVE_INDEX;
 		public int HEALTH_POTION_INDEX;
@@ -30,16 +31,17 @@ namespace PAPIOnline
 		{
 			// All plays are consist of skills, attack, move and use potions
 			this.allActions = new bool[player.GetSkillCount() + 1 + 1 + 2];
-			this.ATTACK_INDEX = player.GetSkillCount();
-			this.MOVE_INDEX = player.GetSkillCount() + 1;
-			this.HEALTH_POTION_INDEX = player.GetSkillCount() + 2;
-			this.MANA_POTION_INDEX = player.GetSkillCount() + 3;
+			this.SKILL_START_INDEX = 0;
+			this.ATTACK_INDEX = this.SKILL_START_INDEX + player.GetSkillCount();
+			this.MOVE_INDEX = this.ATTACK_INDEX + 1;
+			this.HEALTH_POTION_INDEX = this.MOVE_INDEX + 1;
+			this.MANA_POTION_INDEX = this.HEALTH_POTION_INDEX + 1;
 		}
 
 		public int FillAvailableActions(IPlayer player, IPlayer enemy)
 		{
-			// Fill skill masks
 			int availableCount = 0;
+			// Fill skill actions
 			ISkill[] skills = player.GetSkills();
 			float distance = Utils.GetDistance(player, enemy);
 			for (int i = 0; i < skills.Length; i++)
@@ -51,11 +53,11 @@ namespace PAPIOnline
 				if (!player.IsAvailable() || !skill.IsAvailable() || player.GetMana() < skill.GetManaConsumption()
 					|| (skill.GetSkillKind() == SkillKind.ATTACK && distance > ((IAttackSkill)skill).GetRange()))
 				{
-					allActions[i] = false;
+					allActions[SKILL_START_INDEX + i] = false;
 				}
 				else
 				{
-					allActions[i] = true;
+					allActions[SKILL_START_INDEX + i] = true;
 					availableCount++;
 				}
 			}
@@ -71,7 +73,7 @@ namespace PAPIOnline
 				availableCount++;
 			}
 
-			// Eliminate move actions, disable move if close enough to attack
+			// Fill move actions, disable move if close enough to attack
 			if (!player.IsAvailable() || availableCount > 0)
 			{
 				allActions[MOVE_INDEX] = false;
@@ -82,10 +84,10 @@ namespace PAPIOnline
 				availableCount++;
 			}
 
-			// Eliminate potion actions
+			// Fill potion actions
 			// Check player health is full
 			// Check player has enough health potion
-			if (player.GetHealthPotionCount() == 0 || player.GetHealthCapacity() == player.GetHealth())
+			if (player.GetHealthPotionCount() == 0 || (player.GetHealthCapacity() - player.GetHealth() < PlayerProperties.HEALTH_POTION_FILL))
 			{
 				allActions[HEALTH_POTION_INDEX] = false;
 			}
@@ -97,7 +99,7 @@ namespace PAPIOnline
 
 			// Check player mana is full
 			// Check player has enough mana potion
-			if (player.GetManaPotionCount() == 0 || player.GetManaCapacity() == player.GetMana())
+			if (player.GetManaPotionCount() == 0 || (player.GetManaCapacity() - player.GetMana() < PlayerProperties.MANA_POTION_FILL))
 			{
 				allActions[MANA_POTION_INDEX] = false;
 			}
@@ -119,11 +121,11 @@ namespace PAPIOnline
 			}
 
 			// Use skill
-			if (action >= 0 && action < player.GetSkillCount())
+			if (action >= SKILL_START_INDEX && action < ATTACK_INDEX)
 			{
-				player.UseSkill(action, enemy);
+				player.UseSkill(action - SKILL_START_INDEX, enemy);
 			}
-			// Normal attack
+			// Melee attack
 			else if (action == ATTACK_INDEX)
 			{
 				player.Attack(enemy);
@@ -131,10 +133,10 @@ namespace PAPIOnline
 			// Move
 			else if (action == MOVE_INDEX)
 			{
+				// Movement speed increased to make MCTS tree depth small  
 				Vector3 enemyDirection = Utils.GetDirection(player, enemy);
 				float speed = Utils.GetDistance(player, enemy) / 2;
 				speed /= player.GetSpeed();
-				// Multiply direction to move immediately
 				player.Move(enemyDirection * speed);
 			}
 			// Use health potion
@@ -149,7 +151,7 @@ namespace PAPIOnline
 			}
 			else
 			{
-				Debug.LogError("MCTS::Game unrecognised action came: " + action);
+				Debug.LogError(player.GetName() + " unrecognised action came (GameHelper::MakeAction) action: " + action);
 			}
 		}
 
