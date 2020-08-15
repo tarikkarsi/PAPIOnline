@@ -6193,7 +6193,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: f5c5a2fd43d6c66449dc8a1fdb8b2313, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 5240a2b5f62f24e4e9798abdff7d4971, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: RedAgent

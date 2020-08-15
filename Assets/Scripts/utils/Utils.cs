@@ -93,13 +93,13 @@ namespace PAPIOnline
 			List<int> potionMasks = new List<int>();
 			// Check player health is decreased enough
 			// Check player has enough health potion
-			if (player.GetHealthPotionCount() == 0 || player.GetHealthCapacity() == player.GetHealth())
+			if (player.GetHealthPotionCount() == 0 || (player.GetHealthCapacity() - player.GetHealth() < PlayerProperties.HEALTH_POTION_FILL))
 			{
 				potionMasks.Add(1);
 			}
 			// Check player mana is decreased enough
 			// Check player has enough mana potion
-			if (player.GetManaPotionCount() == 0 || player.GetManaCapacity() == player.GetMana())
+			if (player.GetManaPotionCount() == 0 || (player.GetManaCapacity() - player.GetMana() < PlayerProperties.MANA_POTION_FILL))
 			{
 				potionMasks.Add(2);
 			}
