@@ -6193,7 +6193,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: 5240a2b5f62f24e4e9798abdff7d4971, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: c18def37b2d6c4d49b8264cf4416fbb2, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: RedAgent
@@ -7217,7 +7217,7 @@ MonoBehaviour:
     VectorActionSize: 050000000900000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
-  m_Model: {fileID: 5022602860645237092, guid: c18def37b2d6c4d49b8264cf4416fbb2, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 0eabf373dd7c3d040904531b65626498, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: BlueAgent

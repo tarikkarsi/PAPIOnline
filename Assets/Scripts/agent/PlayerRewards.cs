@@ -24,7 +24,7 @@ namespace PAPIOnline
 		private static float WIN_REWARD = 1;
 		private static float LOSE_REWARD = -1;
 		private static float STEP_REWARD;
-		private static float DAMAGE_REWARD = 0.002f;
+		private static float DAMAGE_REWARD = 0.2f;
 		private static float PROPERTY_REWARD = 0.1f;
 		private static float HEALTH_PROPERTY_REWARD = 0.12f;
 		private static float MANA_PROPERTY_REWARD = 0.04f;
